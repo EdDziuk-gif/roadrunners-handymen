@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roadrunners Handymen | Phoenix, AZ</title>
+  <meta name="description" content="One Call Solves It All. Home repairs, remodeling, and landscaping in Phoenix, AZ. Call (480) 529-5032.">
+
+  <!--
+    LANGUAGE INIT — runs before paint to prevent flash of wrong language.
+    Priority: 1) localStorage (explicit choice) → 2) navigator.language → 3) English fallback
+  -->
+  <script>
+    (function () {
+      var stored = localStorage.getItem('rr_lang_pref');
+      var lang;
+      if (stored === 'es' || stored === 'en') {
+        lang = stored;
+      } else {
+        var nav = (navigator.language || navigator.userLanguage || '');
+        lang = nav.startsWith('es') ? 'es' : 'en';
+      }
+      document.documentElement.setAttribute('lang', lang);
+      window.__rrLang = lang;
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body      { font-family: 'Open Sans', sans-serif; background: #F8F6F2; color: #4A4A4A; }
+    .headline { font-family: 'Montserrat', sans-serif; }
+
+    /* ── Language layer toggle ─────────────────────── */
+    [data-lang="es"]                 { display: none;   }
+    html[lang="es"] [data-lang="en"] { display: none;   }
+    html[lang="es"] [data-lang="es"] { display: revert; }
+
+    /* ── Language toggle button active state ──────── */
+    .lang-btn        { opacity: 0.45; }
+    .lang-btn.active { opacity: 1; font-weight: 700; }
+
+    html { scroll-behavior: smooth; }
+
+    /* ── Hero photo ────────────────────────────────── */
+    .hero-section {
+      position: relative;
+      min-height: 100vh;
+    }
+    .hero-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(30,18,8,0.62) 0%,
+        rgba(40,24,10,0.50) 50%,
+        rgba(20,12,4,0.70) 100%
+      );
+    }
+  </style>
+</head>
+
+<body class="text-[#4A4A4A]">
+
+<!-- ════════════════════════════════════════════════════
+     HEADER
+════════════════════════════════════════════════════ -->
+<header id="header" class="fixed top-0 left-0 right-0 z-50 bg-[#3D2B1F] shadow-xl">
+  <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+
+    <!-- Logo -->
+    <div class="flex flex-col leading-tight">
+      <span class="headline text-xl md:text-2xl font-black text-[#C95E1E] tracking-wider uppercase">Roadrunners</span>
+      <span class="text-[10px] md:text-xs text-white/60 tracking-widest uppercase">
+        <span data-lang="en">Handymen · Phoenix, AZ</span>
+        <span data-lang="es">Servicios del Hogar · Phoenix, AZ</span><!-- REVIEW: confirm Spanish -->
+      </span>
+    </div>
+
+    <!-- Right: phones + badge + toggle -->
+    <div class="flex flex-col items-end gap-0.5">
+      <a href="tel:+14805295032"
+         class="headline font-bold text-[#C95E1E] text-base md:text-lg leading-tight hover:text-orange-400 transition-colors">
+        (480) 529-5032
+      </a>
+      <a href="tel:+16028318058"
+         class="text-white/50 text-xs leading-tight hover:text-white/80 transition-colors">
+        (602) 831-8058
+      </a>
+      <div class="flex items-center gap-3 mt-1">
+        <span class="text-[10px] border border-[#C95E1E] text-[#C95E1E] rounded-full px-2 py-0.5 whitespace-nowrap hidden sm:inline">
+          Se Habla Español
+        </span>
+        <div class="flex items-center gap-1.5 text-sm text-white">
+          <button id="btn-en" onclick="setLang('en')" class="lang-btn h-8 px-1">EN</button>
+          <span class="text-white/30">|</span>
+          <button id="btn-es" onclick="setLang('es')" class="lang-btn h-8 px-1">ES</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- Mobile: Se Habla badge -->
+  <div class="sm:hidden bg-[#2A1F14] text-center py-1">
+    <span class="text-[10px] border border-[#C95E1E] text-[#C95E1E] rounded-full px-2 py-0.5">Se Habla Español</span>
+  </div>
+</header>
+
+
+<!-- ════════════════════════════════════════════════════
+     HERO
+════════════════════════════════════════════════════ -->
+<section id="hero" class="hero-section overflow-hidden">
+
+  <!-- Background: company project photo (Arizona backyard — artificial grass, pavers, desert sky) -->
+  <img
+    src="https://static.wixstatic.com/media/fc3f27_e0f380992543461db81599f85a2199d6~mv2.jpeg"
+    alt="Roadrunners Handymen completed backyard project — artificial grass and pavers in Phoenix, AZ"
+    class="hero-bg-img"
+    loading="eager">
+
+  <!-- Warm dark overlay for text legibility -->
+  <div class="hero-overlay"></div>
+
+  <!-- Content: centered, full height -->
+  <div class="relative z-10 flex flex-col items-center justify-center min-h-screen pt-20 pb-12 px-4">
+
+    <!-- Company logo — white card, prominent -->
+    <div class="bg-white rounded-2xl shadow-2xl px-8 py-6 mb-8 w-full max-w-xs">
+      <img
+        src="https://static.wixstatic.com/media/fc3f27_24b3b272fd5c4156bb0344808f71cdb2~mv2.png"
+        alt="Roadrunners Handymen LLC — All Trades, One Team"
+        class="w-full h-auto"
+        width="1536" height="1024">
+    </div>
+
+    <!-- Headline + subhead -->
+    <h1 class="headline text-3xl md:text-4xl font-black text-white text-center leading-tight mb-2 drop-shadow-lg">
+      <span data-lang="en">One Call Solves It All</span>
+      <span data-lang="es">Una Llamada Lo Resuelve Todo</span><!-- REVIEW: confirm Spanish -->
+    </h1>
+    <p class="text-white/80 text-base md:text-lg text-center mb-8 drop-shadow">
+      <span data-lang="en">All services for your home, inside &amp; out · Phoenix, AZ</span>
+      <span data-lang="es">Todos los servicios para su hogar · Phoenix, AZ</span><!-- REVIEW: confirm Spanish -->
+    </p>
+
+    <!-- CTAs -->
+    <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md">
+      <a href="tel:+14805295032"
+         class="headline font-bold text-base bg-[#C95E1E] text-white rounded h-14 flex items-center justify-center px-6 flex-1 hover:bg-[#A84D17] transition-colors shadow-lg">
+        <span data-lang="en">Call (480) 529-5032</span>
+        <span data-lang="es">Llame (480) 529-5032</span><!-- REVIEW: confirm Spanish -->
+      </a>
+      <a href="https://wa.link/18rr9n" target="_blank" rel="noopener"
+         class="headline font-bold text-base bg-white/15 border-2 border-white text-white rounded h-14 flex items-center justify-center px-6 flex-1 hover:bg-white/25 transition-colors gap-2 shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        WhatsApp
+      </a>
+    </div>
+
+    <!-- Estimate sub-links -->
+    <div class="flex gap-4 mt-4 text-sm">
+      <a href="https://wa.link/u3k7z9" target="_blank" rel="noopener"
+         class="text-white/55 hover:text-white underline underline-offset-2 transition-colors">
+        <span data-lang="en">Landscape Estimate</span>
+        <span data-lang="es">Presupuesto Jardín</span><!-- REVIEW: confirm Spanish -->
+      </a>
+      <span class="text-white/25">·</span>
+      <a href="https://wa.link/jihy8w" target="_blank" rel="noopener"
+         class="text-white/55 hover:text-white underline underline-offset-2 transition-colors">
+        <span data-lang="en">Construction Estimate</span>
+        <span data-lang="es">Presupuesto Construcción</span><!-- REVIEW: confirm Spanish -->
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/35 text-sm animate-bounce z-10">↓</div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     TRUST BAR
+════════════════════════════════════════════════════ -->
+<div class="bg-[#3D2B1F] py-4 px-4">
+  <div class="max-w-4xl mx-auto flex flex-wrap justify-center gap-6 md:gap-12 text-white/60 text-sm text-center">
+    <div>
+      <span class="headline font-black text-[#C95E1E] text-xl">20</span>
+      <span class="ml-1">
+        <span data-lang="en">Years Experience</span>
+        <span data-lang="es">Años de Experiencia</span><!-- REVIEW: confirm Spanish -->
+      </span>
+    </div>
+    <div>
+      <span class="headline font-black text-[#C95E1E] text-xl">7</span>
+      <span class="ml-1">
+        <span data-lang="en">Days a Week</span>
+        <span data-lang="es">Días a la Semana</span><!-- REVIEW: confirm Spanish -->
+      </span>
+    </div>
+    <div>
+      <span class="headline font-black text-[#C95E1E] text-xl">5AM</span>
+      <span class="ml-1">
+        <span data-lang="en">Start Time</span>
+        <span data-lang="es">Hora de Inicio</span><!-- REVIEW: confirm Spanish -->
+      </span>
+    </div>
+    <div>
+      <span class="headline font-black text-[#C95E1E] text-xl">Free</span>
+      <span class="ml-1">
+        <span data-lang="en">Estimates</span>
+        <span data-lang="es">Presupuestos</span><!-- REVIEW: confirm Spanish -->
+      </span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
+     SERVICES
+════════════════════════════════════════════════════ -->
+<section id="services" class="py-16 px-4 bg-[#F8F6F2]">
+  <div class="max-w-4xl mx-auto">
+
+    <h2 class="headline text-3xl md:text-4xl font-bold text-center text-[#3D2B1F] mb-2">
+      <span data-lang="en">All Services for Your Home</span>
+      <span data-lang="es">Todos los Servicios para Su Hogar</span><!-- REVIEW: confirm Spanish -->
+    </h2>
+    <p class="text-center text-[#4A4A4A]/60 mb-12 text-sm">
+      <span data-lang="en">Inside &amp; out — guaranteed work.</span>
+      <span data-lang="es">Por dentro y por fuera — trabajo garantizado.</span><!-- REVIEW: confirm Spanish -->
+    </p>
+
+    <!-- Three service categories -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <!-- LANDSCAPING -->
+      <div class="bg-white rounded-lg shadow-sm border border-[#E8E4DC] overflow-hidden">
+        <div class="bg-[#6B8F50] px-5 py-4">
+          <h3 class="headline font-bold text-white text-lg">
+            <span data-lang="en">🌵 Landscaping</span>
+            <span data-lang="es">🌵 Jardinería</span><!-- REVIEW: confirm Spanish -->
+          </h3>
+          <a href="https://wa.link/u3k7z9" target="_blank" rel="noopener"
+             class="text-white/70 text-xs underline hover:text-white transition-colors">
+            <span data-lang="en">Get a Landscape Estimate →</span>
+            <span data-lang="es">Obtener Presupuesto de Jardinería →</span><!-- REVIEW: confirm Spanish -->
+          </a>
+        </div>
+        <ul class="px-5 py-4 space-y-2 text-sm text-[#4A4A4A]">
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Yard Maintenance</span>
+            <span data-lang="es">Mantenimiento de Jardín</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Tree &amp; Palm Trimming</span>
+            <span data-lang="es">Poda de Árboles y Palmas</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Sprinkler Systems</span>
+            <span data-lang="es">Sistemas de Riego</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Artificial Grass</span>
+            <span data-lang="es">Pasto Artificial</span><!-- REVIEW: confirm Spanish -->
+          </li>
+        </ul>
+      </div>
+
+      <!-- CONSTRUCTION & HARDSCAPE -->
+      <div class="bg-white rounded-lg shadow-sm border border-[#E8E4DC] overflow-hidden">
+        <div class="bg-[#8B5A2B] px-5 py-4">
+          <h3 class="headline font-bold text-white text-lg">
+            <span data-lang="en">🧱 Construction</span>
+            <span data-lang="es">🧱 Construcción</span><!-- REVIEW: confirm Spanish -->
+          </h3>
+          <a href="https://wa.link/jihy8w" target="_blank" rel="noopener"
+             class="text-white/70 text-xs underline hover:text-white transition-colors">
+            <span data-lang="en">Get a Construction Estimate →</span>
+            <span data-lang="es">Obtener Presupuesto de Construcción →</span><!-- REVIEW: confirm Spanish -->
+          </a>
+        </div>
+        <ul class="px-5 py-4 space-y-2 text-sm text-[#4A4A4A]">
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Stone &amp; Gravel Installation</span>
+            <span data-lang="es">Instalación de Piedra y Grava</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Concrete · Pavers · Flagstone</span>
+            <span data-lang="es">Concreto · Adoquines · Piedra Laja</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Stucco · Block Wall</span>
+            <span data-lang="es">Estuco · Muros de Block</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Fireplace · Pool Remodeling</span>
+            <span data-lang="es">Chimenea · Remodelación de Piscina</span><!-- REVIEW: confirm Spanish -->
+          </li>
+        </ul>
+      </div>
+
+      <!-- GENERAL REMODELING -->
+      <div class="bg-white rounded-lg shadow-sm border border-[#E8E4DC] overflow-hidden">
+        <div class="bg-[#C95E1E] px-5 py-4">
+          <h3 class="headline font-bold text-white text-lg">
+            <span data-lang="en">🔧 Remodeling</span>
+            <span data-lang="es">🔧 Remodelación</span><!-- REVIEW: confirm Spanish -->
+          </h3>
+          <a href="#contact"
+             class="text-white/70 text-xs underline hover:text-white transition-colors">
+            <span data-lang="en">Request a Free Estimate →</span>
+            <span data-lang="es">Solicitar Presupuesto Gratis →</span><!-- REVIEW: confirm Spanish -->
+          </a>
+        </div>
+        <ul class="px-5 py-4 space-y-2 text-sm text-[#4A4A4A]">
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Kitchen &amp; Bathroom</span>
+            <span data-lang="es">Cocina y Baño</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Paint · Drywall · Interior &amp; Exterior</span>
+            <span data-lang="es">Pintura · Tablaroca · Interior y Exterior</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Tile · Flooring · Carpet</span>
+            <span data-lang="es">Azulejo · Pisos · Alfombra</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Plumbing · Electric · Framing</span>
+            <span data-lang="es">Plomería · Electricidad · Armazón</span><!-- REVIEW: confirm Spanish -->
+          </li>
+          <li class="flex items-start gap-2"><span class="text-[#C95E1E] mt-0.5">✓</span>
+            <span data-lang="en">Carports · Garage Doors</span>
+            <span data-lang="es">Cocheras · Puertas de Garaje</span><!-- REVIEW: confirm Spanish -->
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     FAQ — reads from localStorage managed by /admin
+     Falls back to defaults if admin hasn't set content
+════════════════════════════════════════════════════ -->
+<section id="faq" class="py-16 px-4 bg-white">
+  <div class="max-w-3xl mx-auto">
+
+    <h2 class="headline text-3xl md:text-4xl font-bold text-center text-[#3D2B1F] mb-2">
+      <span data-lang="en">Frequently Asked Questions</span>
+      <span data-lang="es">Preguntas Frecuentes</span>
+    </h2>
+    <p class="text-center text-[#4A4A4A]/60 mb-10 text-sm">
+      <span data-lang="en">Quick answers to common questions.</span>
+      <span data-lang="es">Respuestas rápidas a las preguntas más comunes.</span>
+    </p>
+
+    <div id="faq-list" class="space-y-3"></div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     CONTACT
+════════════════════════════════════════════════════ -->
+<section id="contact" class="py-16 px-4 bg-[#3D2B1F]">
+  <div class="max-w-xl mx-auto">
+
+    <h2 class="headline text-3xl md:text-4xl font-bold text-center text-white mb-2">
+      <span data-lang="en">Get a Free Estimate</span>
+      <span data-lang="es">Solicite un Presupuesto Gratis</span><!-- REVIEW: confirm Spanish -->
+    </h2>
+    <p class="text-center text-white/50 mb-8 text-sm">
+      <span data-lang="en">Email or call — we respond fast.</span>
+      <span data-lang="es">Correo o teléfono — respondemos rápido.</span><!-- REVIEW: confirm Spanish -->
+    </p>
+
+    <!-- CLARIFY: replace form action with real endpoint (Formspree, Worker, etc.) before going live -->
+    <form id="contact-form" class="flex flex-col gap-4" onsubmit="handleSubmit(event)">
+
+      <div class="flex flex-col gap-1">
+        <label for="name" class="text-white/80 text-sm font-semibold">
+          <span data-lang="en">Your Name</span>
+          <span data-lang="es">Su Nombre</span><!-- REVIEW: confirm Spanish -->
+        </label>
+        <input type="text" id="name" name="name" required autocomplete="name"
+               class="h-12 rounded px-4 text-base bg-white/10 border border-white/20 text-white placeholder-white/35 focus:outline-none focus:border-[#C95E1E]"
+               data-ph-en="Jane Smith" data-ph-es="María García" placeholder="Jane Smith">
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="phone" class="text-white/80 text-sm font-semibold">
+          <span data-lang="en">Phone Number</span>
+          <span data-lang="es">Número de Teléfono</span><!-- REVIEW: confirm Spanish -->
+        </label>
+        <input type="tel" id="phone" name="phone" required autocomplete="tel"
+               class="h-12 rounded px-4 text-base bg-white/10 border border-white/20 text-white placeholder-white/35 focus:outline-none focus:border-[#C95E1E]"
+               placeholder="(602) 555-1234">
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="message" class="text-white/80 text-sm font-semibold">
+          <span data-lang="en">What do you need?</span>
+          <span data-lang="es">¿Qué necesita?</span><!-- REVIEW: confirm Spanish -->
+        </label>
+        <textarea id="message" name="message" rows="4" required
+                  class="rounded px-4 py-3 text-base bg-white/10 border border-white/20 text-white placeholder-white/35 focus:outline-none focus:border-[#C95E1E] resize-none"
+                  data-ph-en="Describe the job — a few words is fine."
+                  data-ph-es="Describa el trabajo — unas pocas palabras están bien."
+                  placeholder="Describe the job — a few words is fine."></textarea>
+      </div>
+
+      <button type="submit"
+              class="headline font-bold text-lg bg-[#C95E1E] text-white rounded h-14 flex items-center justify-center hover:bg-[#A84D17] transition-colors">
+        <span data-lang="en">Send My Request</span>
+        <span data-lang="es">Enviar Mi Solicitud</span><!-- REVIEW: confirm Spanish -->
+      </button>
+
+    </form>
+
+    <!-- Divider -->
+    <div class="flex items-center gap-4 my-6">
+      <div class="flex-1 h-px bg-white/20"></div>
+      <span class="text-white/35 text-xs uppercase tracking-widest">
+        <span data-lang="en">or reach us directly</span>
+        <span data-lang="es">o contáctenos directamente</span><!-- REVIEW: confirm Spanish -->
+      </span>
+      <div class="flex-1 h-px bg-white/20"></div>
+    </div>
+
+    <!-- Direct contact options -->
+    <div class="flex flex-col gap-3">
+      <a href="tel:+14805295032"
+         class="headline font-bold text-lg border-2 border-[#C95E1E] text-[#C95E1E] rounded h-14 flex items-center justify-center hover:bg-[#C95E1E] hover:text-white transition-colors">
+        (480) 529-5032
+      </a>
+      <a href="tel:+16028318058"
+         class="headline font-bold text-base border border-white/30 text-white/60 rounded h-12 flex items-center justify-center hover:border-white/60 hover:text-white transition-colors">
+        (602) 831-8058
+      </a>
+      <div class="flex gap-3">
+        <a href="sms:+14805295032"
+           class="flex-1 text-center text-white/50 text-sm h-10 flex items-center justify-center rounded border border-white/15 hover:text-white/80 hover:border-white/30 transition-colors">
+          <span data-lang="en">Text Us</span>
+          <span data-lang="es">Enviar Texto</span>
+        </a>
+        <a href="mailto:roadrunnersdandymen67@gmail.com?subject=Estimate%20Request"
+           class="flex-1 text-center text-white/50 text-sm h-10 flex items-center justify-center rounded border border-white/15 hover:text-white/80 hover:border-white/30 transition-colors">
+          <span data-lang="en">Email Us</span>
+          <span data-lang="es">Envíe un Correo</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════════════════ -->
+<footer class="bg-[#2A1F14] py-10 px-4 text-white/45 text-sm">
+  <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+
+    <div class="text-center md:text-left">
+      <p class="headline font-black text-[#C95E1E] text-lg tracking-wider uppercase">Roadrunners Handymen</p>
+      <p class="mt-1">
+        <span data-lang="en">Everyday · Starting 5:00 AM</span>
+        <!-- CLARIFY: confirm closing time with client -->
+        <span data-lang="es">Todos los Días · Desde las 5:00 AM</span><!-- REVIEW: confirm Spanish -->
+      </p>
+      <p class="mt-0.5">
+        <a href="tel:+14805295032" class="hover:text-white transition-colors">(480) 529-5032</a>
+        &nbsp;·&nbsp;
+        <a href="tel:+16028318058" class="hover:text-white transition-colors">(602) 831-8058</a>
+      </p>
+      <p class="mt-0.5">
+        <a href="mailto:roadrunnersdandymen67@gmail.com" class="hover:text-white transition-colors">
+          roadrunnersdandymen67@gmail.com
+        </a>
+      </p>
+    </div>
+
+    <div class="flex flex-col items-center gap-3">
+      <!-- Language toggle -->
+      <div class="flex items-center gap-2 text-xs">
+        <button onclick="setLang('en')" class="lang-btn hover:text-white transition-colors">English</button>
+        <span class="text-white/20">|</span>
+        <button onclick="setLang('es')" class="lang-btn hover:text-white transition-colors">Español</button>
+      </div>
+      <!-- Photo credit -->
+      <p class="text-white/20 text-[9px] text-center">
+        Bird photo: Peter Wallack / CC BY-SA 3.0
+      </p>
+    </div>
+
+  </div>
+  <p class="text-center text-white/20 text-[10px] mt-8">
+    <!-- CLARIFY: confirm legal entity name for copyright line -->
+    &copy; <span id="footer-year"></span> Roadrunners Handymen · Phoenix, AZ
+  </p>
+</footer>
+
+
+<!-- ════════════════════════════════════════════════════
+     SCRIPTS
+════════════════════════════════════════════════════ -->
+<script>
+  document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+  // ── Language switcher ──────────────────────────────
+  function setLang(lang) {
+    document.documentElement.setAttribute('lang', lang);
+    localStorage.setItem('rr_lang_pref', lang);
+    window.__rrLang = lang;
+    updateUI();
+  }
+
+  function updateUI() {
+    var lang = window.__rrLang || 'en';
+
+    // Active state on header buttons
+    ['btn-en', 'btn-es'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('active', (id === 'btn-' + lang));
+    });
+
+    // Active state on footer text buttons (no id — match via onclick content)
+    document.querySelectorAll('.lang-btn').forEach(function (el) {
+      var fn = el.getAttribute('onclick') || '';
+      el.classList.toggle('active', fn.indexOf("'" + lang + "'") !== -1);
+    });
+
+    // Swap input placeholders
+    document.querySelectorAll('[data-ph-en]').forEach(function (el) {
+      el.placeholder = lang === 'es'
+        ? (el.getAttribute('data-ph-es') || '')
+        : (el.getAttribute('data-ph-en') || '');
+    });
+  }
+
+  // ── Form stub ──────────────────────────────────────
+  // CLARIFY: replace with real form submission endpoint before launch
+  function handleSubmit(e) {
+    e.preventDefault();
+    var lang = window.__rrLang || 'en';
+    alert(lang === 'es'
+      ? '¡Gracias! Le contactaremos pronto.'
+      : "Thanks! We'll be in touch shortly.");
+    e.target.reset();
+  }
+
+  // ── FAQ — reads from localStorage (admin-managed) ──
+  const FAQ_DEFAULTS = [
+    { id:1, publico:true,
+      pregunta_en:'What areas do you serve?',
+      respuesta_en:'We serve the greater Phoenix metropolitan area — including Scottsdale, Tempe, Chandler, Mesa, and surrounding cities.',
+      pregunta_es:'¿Qué áreas cubren?',
+      respuesta_es:'Servimos toda el área metropolitana de Phoenix: Scottsdale, Tempe, Chandler, Mesa y ciudades cercanas.' },
+    { id:2, publico:true,
+      pregunta_en:'How quickly can you respond?',
+      respuesta_en:'We typically respond within a few hours. Our team is available 7 days a week starting at 5:00 AM.',
+      pregunta_es:'¿Qué tan rápido responden?',
+      respuesta_es:'Normalmente respondemos en pocas horas. Estamos disponibles los 7 días de la semana desde las 5:00 AM.' },
+    { id:3, publico:true,
+      pregunta_en:'Do you offer free estimates?',
+      respuesta_en:'Yes! Free estimates for all jobs — contact us by WhatsApp, phone, or email.',
+      pregunta_es:'¿Ofrecen presupuestos gratuitos?',
+      respuesta_es:'¡Sí! Presupuestos gratuitos para todos los trabajos — contáctenos por WhatsApp, teléfono o correo.' },
+    { id:4, publico:true,
+      pregunta_en:'What types of work do you handle?',
+      respuesta_en:'Everything from landscaping, hardscape, and outdoor construction to full interior remodeling — kitchens, bathrooms, flooring, painting, plumbing, electrical, and more.',
+      pregunta_es:'¿Qué tipo de trabajos realizan?',
+      respuesta_es:'De todo: jardinería, construcción exterior y remodelación interior — cocinas, baños, pisos, pintura, plomería, electricidad y más.' },
+    { id:5, publico:true,
+      pregunta_en:'Are you licensed and insured?',
+      respuesta_en:'Yes, we are licensed and insured for your protection and peace of mind.',
+      pregunta_es:'¿Tienen licencia y seguro?',
+      respuesta_es:'Sí, contamos con licencia y seguro para su protección y tranquilidad.' },
+  ];
+
+  function renderFAQ() {
+    var lang = window.__rrLang || 'en';
+    var raw;
+    try { raw = localStorage.getItem('rr_qa'); } catch(e) { raw = null; }
+    var list = raw ? JSON.parse(raw) : FAQ_DEFAULTS;
+    var public_items = list.filter(function(q) { return q.publico; });
+    var container = document.getElementById('faq-list');
+    if (!container) return;
+    if (!public_items.length) { container.innerHTML = ''; return; }
+    container.innerHTML = public_items.map(function(q, i) {
+      return '<div class="border border-[#E8E4DC] rounded-lg overflow-hidden">' +
+        '<button class="w-full text-left px-5 py-4 font-semibold text-[#3D2B1F] flex items-center justify-between gap-4 hover:bg-[#F8F6F2] transition-colors h-auto min-h-[56px]"' +
+        ' onclick="toggleFAQ(' + i + ')">' +
+        '<span class="faq-q-' + i + '">' +
+          '<span data-lang="en">' + escHtml(q.pregunta_en) + '</span>' +
+          '<span data-lang="es">' + escHtml(q.pregunta_es) + '</span>' +
+        '</span>' +
+        '<span id="faq-icon-' + i + '" class="text-[#C95E1E] flex-shrink-0 text-xl leading-none">+</span>' +
+        '</button>' +
+        '<div id="faq-body-' + i + '" class="hidden px-5 pb-4 text-[#4A4A4A] text-sm leading-relaxed">' +
+          '<span data-lang="en">' + escHtml(q.respuesta_en) + '</span>' +
+          '<span data-lang="es">' + escHtml(q.respuesta_es) + '</span>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function toggleFAQ(i) {
+    var body = document.getElementById('faq-body-' + i);
+    var icon = document.getElementById('faq-icon-' + i);
+    if (!body) return;
+    var open = !body.classList.contains('hidden');
+    body.classList.toggle('hidden', open);
+    if (icon) icon.textContent = open ? '+' : '−';
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Init ───────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    updateUI();
+    renderFAQ();
+  });
+</script>
+
+</body>
+</html>

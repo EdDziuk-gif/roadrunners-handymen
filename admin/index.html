@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración — Roadrunners Handymen</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body      { font-family: 'Open Sans', sans-serif; background: #F4F0EB; color: #1A1A1A; }
+    .headline { font-family: 'Montserrat', sans-serif; }
+
+    /* ── Inputs ─────────────────────────────────────── */
+    input[type="text"],
+    input[type="number"],
+    input[type="time"],
+    input[type="password"],
+    input[type="email"],
+    textarea,
+    select {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #D1C4B8;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: 'Open Sans', sans-serif;
+      background: white;
+      color: #1A1A1A;
+      transition: border-color 0.15s;
+    }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #C95E1E; }
+    label { display: block; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 4px; }
+
+    /* ── Buttons ─────────────────────────────────────── */
+    .btn { display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+           border: none; border-radius: 8px; font-weight: 700; transition: opacity 0.15s, background 0.15s; }
+    .btn:hover { opacity: 0.88; }
+    .btn-primary   { background: #C95E1E; color: white; font-size: 15px; padding: 13px 26px;
+                     font-family: 'Montserrat', sans-serif; }
+    .btn-secondary { background: #EDE8E1; color: #4A4A4A; font-size: 14px; padding: 10px 20px; }
+    .btn-danger    { background: #DC2626; color: white; font-size: 13px; padding: 7px 15px; border-radius: 6px; }
+    .btn-sm        { font-size: 13px; padding: 7px 14px; }
+
+    /* ── Tab nav ─────────────────────────────────────── */
+    .tab-btn {
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      border-bottom: 3px solid transparent;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .tab-btn:hover { color: #C95E1E; }
+    .tab-btn.active { color: #C95E1E; border-bottom-color: #C95E1E; }
+
+    /* ── Panels ──────────────────────────────────────── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Card ────────────────────────────────────────── */
+    .card { background: white; border-radius: 14px; padding: 24px; border: 1px solid #E5DDD4; }
+
+    /* ── Language badges ─────────────────────────────── */
+    .badge-en { background: #DBEAFE; color: #1D4ED8; font-size: 11px; font-weight: 700;
+                padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+    .badge-es { background: #D1FAE5; color: #065F46; font-size: 11px; font-weight: 700;
+                padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+
+    /* ── Calendar ────────────────────────────────────── */
+    .cal-cell {
+      min-height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.15s;
+      border: 1.5px solid transparent;
+    }
+    .cal-cell:hover { opacity: 0.75; }
+    .cal-libre    { background: #F3EFE9; color: #AAA; border-color: #E5DDD4; }
+    .cal-asignado { background: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+    .cal-ausente  { background: #FEE2E2; color: #991B1B; border-color: #FECACA; }
+
+    /* ── Toast ───────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+      background: #14532D; color: white; padding: 14px 32px; border-radius: 12px;
+      font-weight: 700; font-size: 15px; z-index: 9999;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ── Subscriptions vault ──────────────────────────── */
+    .sub-dropdown-label { display: block; font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+    .sub-dropdown { padding: 10px 14px; border: 1.5px solid #D1C4B8; border-radius: 8px; font-family: 'Open Sans', sans-serif; font-size: 15px; color: #1A1A1A; background: white; min-width: 260px; }
+    .sub-dropdown:focus { outline: none; border-color: #C95E1E; }
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+    .sub-section { background: white; border-radius: 12px; border: 1px solid #E5DDD4; margin-bottom: 16px; overflow: hidden; }
+    .sub-section-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #E5DDD4; background: #F4F0EB; }
+    .sub-section-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.9rem; color: #3D2B1F; }
+    .sub-section-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+    .sub-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .sub-field-row.thirds { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 640px) { .sub-field-row, .sub-field-row.thirds { grid-template-columns: 1fr; } }
+    .sub-field { display: flex; flex-direction: column; gap: 4px; }
+    .sub-field label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 0; }
+    .sub-card-wrap { position: relative; }
+    .sub-card-toggle { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 10px; font-weight: 700; color: #BBB; letter-spacing: .05em; padding: 0; }
+    .sub-card-toggle:hover { color: #3D2B1F; }
+    .sub-save-btn { display: inline-flex; align-items: center; padding: 12px 28px; background: #C95E1E; color: white; border: none; border-radius: 8px; font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s; margin-top: 4px; }
+    .sub-save-btn:hover { opacity: .85; }
+    .sub-link-btn { font-size: 12px; font-weight: 700; color: #3D2B1F; text-decoration: none; border: 1.5px solid #D1C4B8; border-radius: 6px; padding: 5px 12px; transition: background .15s; white-space: nowrap; }
+    .sub-link-btn:hover { background: #EDE8E1; }
+
+    /* ── Modal backdrop ──────────────────────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50; padding: 16px;
+    }
+    .modal-backdrop.hidden { display: none; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+<!-- ══════════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════════ -->
+<div id="login-screen" class="min-h-screen flex items-center justify-center px-4 bg-[#F4F0EB]">
+  <div class="w-full max-w-sm">
+    <div class="card text-center shadow-lg">
+
+      <!-- Logo -->
+      <div class="mb-5">
+        <img src="https://static.wixstatic.com/media/fc3f27_24b3b272fd5c4156bb0344808f71cdb2~mv2.png"
+             alt="Roadrunners Handymen" class="w-36 mx-auto"
+             onerror="this.style.display='none'">
+        <p class="headline font-black text-2xl text-[#C95E1E] mt-2">ROADRUNNERS</p>
+        <p class="text-xs text-gray-500 mt-0.5 tracking-wide uppercase">Panel de Administración</p>
+      </div>
+
+      <p class="text-[15px] text-gray-700 mb-4">Ingrese su NIP para continuar</p>
+
+      <label for="pin-input" class="text-left text-sm font-semibold text-gray-600 mb-1">NIP (contraseña)</label>
+      <input type="password" id="pin-input" maxlength="12"
+             placeholder="••••••"
+             class="text-center text-2xl tracking-[0.4em] mb-4"
+             onkeydown="if(event.key==='Enter') checkPin()">
+
+      <button onclick="checkPin()" class="btn btn-primary w-full text-base">
+        Entrar al Sistema
+      </button>
+
+      <p id="login-error" class="text-red-600 text-sm mt-3 font-semibold hidden">
+        ⚠️ NIP incorrecto. Intente de nuevo.
+      </p>
+    </div>
+
+    <p class="text-center text-gray-400 text-xs mt-5">
+      <!-- CLARIFY: default NIP es '1234' — cambiar antes de lanzar -->
+      Roadrunners Handymen LLC · Sistema de Administración
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     PORTAL
+══════════════════════════════════════════════════ -->
+<div id="portal" class="hidden min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-[#3D2B1F] text-white px-5 py-3 flex items-center justify-between shadow-md flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="bg-white rounded-lg px-2 py-1 hidden sm:block">
+        <img src="https://static.wixstatic.com/media/fc3f27_24b3b272fd5c4156bb0344808f71cdb2~mv2.png"
+             alt="Logo" class="h-8 w-auto" onerror="this.style.display='none'">
+      </div>
+      <div class="leading-tight">
+        <p class="headline font-black text-[#C95E1E] text-base">ROADRUNNERS HANDYMEN</p>
+        <p class="text-white/50 text-xs">Panel de Administración</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="../index.html" target="_blank"
+         class="text-white/50 text-xs hover:text-white transition-colors hidden sm:inline">
+        Ver sitio →
+      </a>
+      <button onclick="showPinModal()" class="btn btn-secondary btn-sm">Cambiar NIP</button>
+      <button onclick="logout()" class="btn btn-secondary btn-sm">Salir</button>
+    </div>
+  </header>
+
+  <!-- Tab navigation -->
+  <nav class="bg-white border-b border-gray-200 overflow-x-auto flex-shrink-0 shadow-sm">
+    <div class="flex min-w-max px-2">
+      <button onclick="showTab('horas')"         class="tab-btn active" data-tab="horas">       ⏰ Horas de Servicio     </button>
+      <button onclick="showTab('suscripciones')" class="tab-btn"        data-tab="suscripciones">💳 Suscripciones         </button>
+      <button onclick="showTab('calendario')"    class="tab-btn"        data-tab="calendario">   📅 Calendario del Equipo </button>
+      <button onclick="showTab('bot')"           class="tab-btn"        data-tab="bot">          🤖 Prompts del Sistema   </button>
+      <button onclick="showTab('qa')"            class="tab-btn"        data-tab="qa">           ❓ Preguntas Frecuentes  </button>
+    </div>
+  </nav>
+
+  <!-- Main content -->
+  <main class="flex-1 overflow-auto py-8 px-4">
+    <div class="max-w-4xl mx-auto space-y-6">
+
+
+      <!-- ══ TAB: HORAS DE SERVICIO ══════════════════ -->
+      <div id="panel-horas" class="panel active">
+
+        <div class="mb-6">
+          <h2 class="headline text-2xl font-black text-[#3D2B1F]">Horas de Servicio</h2>
+          <p class="text-gray-500 mt-1">Configure los días y horarios en que su equipo trabaja. Estos horarios aparecen en el sitio web.</p>
+        </div>
+
+        <div class="card">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="border-b border-gray-100">
+                  <th class="text-left py-3 pr-6 text-sm text-gray-500 font-semibold">Día</th>
+                  <th class="py-3 px-4 text-sm text-gray-500 font-semibold text-center">¿Abierto?</th>
+                  <th class="py-3 px-4 text-sm text-gray-500 font-semibold text-left">Empieza a las</th>
+                  <th class="py-3 px-4 text-sm text-gray-500 font-semibold text-left">Termina a las</th>
+                </tr>
+              </thead>
+              <tbody id="hours-tbody"></tbody>
+            </table>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-gray-100 flex flex-wrap items-center gap-4">
+            <button onclick="saveHours()" class="btn btn-primary">
+              💾 Guardar Horario
+            </button>
+            <span id="hours-ok" class="text-green-700 font-semibold text-sm hidden">✓ Horario guardado</span>
+          </div>
+        </div>
+
+      </div><!-- /horas -->
+
+
+      <!-- ══ TAB: SUSCRIPCIONES ══════════════════════ -->
+      <div id="panel-suscripciones" class="panel">
+
+        <div class="mb-6">
+          <h2 class="headline text-2xl font-black text-[#3D2B1F]">Suscripciones</h2>
+          <p class="text-gray-500 mt-1">Credenciales y claves de las plataformas del negocio. Se guardan en este dispositivo.</p>
+        </div>
+
+        <!-- Vendor selector -->
+        <div class="flex items-center gap-5 mb-6">
+          <div>
+            <label class="sub-dropdown-label">Plataforma</label>
+            <select class="sub-dropdown" id="subSelect" onchange="switchSubscription()">
+              <option value="surge">Surge — Alertas SMS</option>
+              <option value="supabase">Supabase — Base de datos</option>
+              <option value="anthropic">Anthropic AI — Inteligencia Artificial</option>
+              <option value="resend">Resend — Correo electrónico</option>
+            </select>
+          </div>
+          <div style="margin-top:1.3rem">
+            <span id="vaultSaveStatus" style="font-size:12px;color:#AAA;font-family:'SF Mono','Fira Mono',monospace;"></span>
+          </div>
+        </div>
+
+        <!-- ══ SURGE ══ -->
+        <div class="sub-panel active" id="subPanel-surge">
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">🔐 Credenciales de Cuenta</div>
+              <a href="https://hq.surge.app" target="_blank" class="sub-link-btn">Abrir Surge ↗</a>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Correo de acceso</label>
+                  <input type="email" id="surge_email" placeholder="correo@ejemplo.com" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Contraseña</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="surge_password" placeholder="••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('surge_password',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>ID de Cuenta</label>
+                  <input type="text" id="surge_account_id" placeholder="acct_01…" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Clave API</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="surge_api_key" placeholder="••••••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('surge_api_key',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Número de Envío</label>
+                  <input type="text" id="surge_from_number" placeholder="(844) 940-0984" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Teléfono de Alerta</label>
+                  <input type="text" id="surge_alert_phone" placeholder="+14803600069" oninput="vaultMarkDirty()"></div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">📋 Referencia de Aplicación</div>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Nombre del Negocio</label>
+                  <input type="text" id="surge_biz_name" placeholder="Roadrunners Handymen" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Razón Social</label>
+                  <input type="text" id="surge_legal_name" placeholder="Roadrunners Handymen LLC" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field-row thirds">
+                <div class="sub-field"><label>Tipo de Organización</label>
+                  <select id="surge_org_type" onchange="vaultMarkDirty()">
+                    <option value="">— seleccionar —</option>
+                    <option value="llc">LLC</option>
+                    <option value="sole_proprietor">Propietario individual</option>
+                    <option value="corporation">Corporación</option>
+                    <option value="partnership">Sociedad</option>
+                  </select>
+                </div>
+                <div class="sub-field"><label>EIN / RFC</label>
+                  <input type="text" id="surge_ein" placeholder="12-3456789" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Industria</label>
+                  <input type="text" id="surge_industry" placeholder="Servicios de construcción" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field"><label>Sitio Web</label>
+                <input type="text" id="surge_website" placeholder="https://roadrunnershandymen.com" oninput="vaultMarkDirty()"></div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Nombre de Contacto</label>
+                  <input type="text" id="surge_contact_name" placeholder="Nombre completo" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Correo de Contacto</label>
+                  <input type="email" id="surge_contact_email" placeholder="correo@negocio.com" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field"><label>Descripción de Campaña</label>
+                <textarea id="surge_campaign_desc" rows="3" placeholder="Notificaciones operativas internas cuando un prospecto señala interés en el sitio web." oninput="vaultMarkDirty()"></textarea>
+              </div>
+              <div class="sub-field"><label>Notas</label>
+                <textarea id="surge_notes" rows="3" oninput="vaultMarkDirty()"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="sub-save-btn" onclick="vaultSave('surge')">Guardar Surge</button>
+        </div><!-- /surge -->
+
+        <!-- ══ SUPABASE ══ -->
+        <div class="sub-panel" id="subPanel-supabase">
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">🔐 Credenciales de Cuenta</div>
+              <a href="https://supabase.com/dashboard" target="_blank" class="sub-link-btn">Tablero ↗</a>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Correo de acceso</label>
+                  <input type="email" id="supabase_email" placeholder="correo@ejemplo.com" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Contraseña</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="supabase_password" placeholder="••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('supabase_password',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>ID del Proyecto</label>
+                  <input type="text" id="supabase_project_id" placeholder="xxxxxxxxxxxxxxxx" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>URL del Proyecto</label>
+                  <input type="text" id="supabase_project_url" placeholder="https://xxxx.supabase.co" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Clave Publicable (anon key)</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="supabase_publishable_key" placeholder="eyJhbGc…" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('supabase_publishable_key',this)">MOSTRAR</button>
+                  </div>
+                </div>
+                <div class="sub-field"><label>Clave Secreta (service_role)</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="supabase_secret_key" placeholder="eyJhbGc…" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('supabase_secret_key',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field"><label>Clave de Cifrado del Vault (VAULT_ENCRYPTION_KEY)</label>
+                <div class="sub-card-wrap">
+                  <input type="password" id="supabase_vault_key" placeholder="clave base64 de 32 bytes — openssl rand -base64 32" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                  <button class="sub-card-toggle" onclick="vaultTogglePassword('supabase_vault_key',this)">MOSTRAR</button>
+                </div>
+              </div>
+              <div class="sub-field"><label>Notas</label>
+                <textarea id="supabase_notes" rows="4" placeholder="Notas sobre claves, historial de migración, etc." oninput="vaultMarkDirty()"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="sub-save-btn" onclick="vaultSave('supabase')">Guardar Supabase</button>
+        </div><!-- /supabase -->
+
+        <!-- ══ ANTHROPIC ══ -->
+        <div class="sub-panel" id="subPanel-anthropic">
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">🔐 Credenciales de Cuenta</div>
+              <a href="https://console.anthropic.com" target="_blank" class="sub-link-btn">Consola ↗</a>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Correo de acceso</label>
+                  <input type="email" id="anthropic_email" placeholder="correo@ejemplo.com" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Contraseña</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="anthropic_password" placeholder="••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('anthropic_password',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field"><label>Clave API</label>
+                <div class="sub-card-wrap">
+                  <input type="password" id="anthropic_api_key" placeholder="sk-ant-…" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                  <button class="sub-card-toggle" onclick="vaultTogglePassword('anthropic_api_key',this)">MOSTRAR</button>
+                </div>
+              </div>
+              <div class="sub-field"><label>Notas</label>
+                <textarea id="anthropic_notes" rows="4" oninput="vaultMarkDirty()"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="sub-save-btn" onclick="vaultSave('anthropic')">Guardar Anthropic AI</button>
+        </div><!-- /anthropic -->
+
+        <!-- ══ RESEND ══ -->
+        <div class="sub-panel" id="subPanel-resend">
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">🔐 Credenciales de Cuenta</div>
+              <a href="https://resend.com/login" target="_blank" class="sub-link-btn">Tablero ↗</a>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Correo de acceso</label>
+                  <input type="email" id="resend_email" placeholder="correo@ejemplo.com" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Contraseña</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="resend_password" placeholder="••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('resend_password',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Clave API</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="resend_api_key" placeholder="re_…" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('resend_api_key',this)">MOSTRAR</button>
+                  </div>
+                </div>
+                <div class="sub-field"><label>Dirección de Envío</label>
+                  <input type="text" id="resend_from_address" placeholder="no-reply@negocio.com" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field"><label>Notas</label>
+                <textarea id="resend_notes" rows="4" oninput="vaultMarkDirty()"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="sub-save-btn" onclick="vaultSave('resend')">Guardar Resend</button>
+        </div><!-- /resend -->
+
+      </div><!-- /suscripciones -->
+
+
+      <!-- ══ TAB: CALENDARIO DEL EQUIPO ══════════════ -->
+      <div id="panel-calendario" class="panel">
+
+        <div class="mb-6">
+          <h2 class="headline text-2xl font-black text-[#3D2B1F]">Calendario del Equipo</h2>
+          <p class="text-gray-500 mt-1">Haga clic en cualquier día para cambiar la disponibilidad de cada integrante.</p>
+        </div>
+
+        <!-- Team names -->
+        <div class="card mb-5">
+          <p class="font-black text-sm text-[#3D2B1F] mb-3 uppercase tracking-wide">Nombres del Equipo</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="team-name-inputs"></div>
+          <button onclick="saveTeamNames()" class="btn btn-secondary btn-sm mt-4">Guardar nombres</button>
+          <span id="team-ok" class="text-green-700 font-semibold text-sm ml-3 hidden">✓ Guardado</span>
+        </div>
+
+        <!-- Week nav -->
+        <div class="flex items-center gap-4 mb-4 flex-wrap">
+          <button onclick="weekNav(-1)" class="btn btn-secondary btn-sm">← Semana anterior</button>
+          <span id="week-label" class="font-black text-[#3D2B1F] text-sm"></span>
+          <button onclick="weekNav(1)"  class="btn btn-secondary btn-sm">Semana siguiente →</button>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex gap-5 mb-4 text-xs font-semibold text-gray-600">
+          <span class="flex items-center gap-1.5">
+            <span class="inline-block w-4 h-4 rounded bg-[#F3EFE9] border border-[#E5DDD4]"></span> Libre
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="inline-block w-4 h-4 rounded bg-[#FEF3C7] border border-[#FDE68A]"></span> Asignado
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="inline-block w-4 h-4 rounded bg-[#FEE2E2] border border-[#FECACA]"></span> Ausente
+          </span>
+        </div>
+
+        <div class="card overflow-x-auto">
+          <div id="cal-grid" class="min-w-[560px]"></div>
+        </div>
+
+      </div><!-- /calendario -->
+
+
+      <!-- ══ TAB: PROMPTS DEL SISTEMA ════════════════ -->
+      <div id="panel-bot" class="panel">
+
+        <div class="mb-6">
+          <h2 class="headline text-2xl font-black text-[#3D2B1F]">Prompts del Sistema</h2>
+          <p class="text-gray-500 mt-1">Configure los mensajes automáticos del asistente virtual. Cada mensaje debe estar en <strong>inglés y español</strong>.</p>
+        </div>
+
+        <div id="prompts-list" class="space-y-4"></div>
+
+        <div class="mt-6 flex flex-wrap gap-3 items-center">
+          <button onclick="addPrompt()" class="btn btn-secondary">+ Agregar Mensaje</button>
+          <button onclick="savePrompts()" class="btn btn-primary">💾 Guardar Mensajes</button>
+          <span id="prompts-ok" class="text-green-700 font-semibold text-sm hidden">✓ Guardado</span>
+        </div>
+
+      </div><!-- /bot -->
+
+
+      <!-- ══ TAB: PREGUNTAS FRECUENTES ═══════════════ -->
+      <div id="panel-qa" class="panel">
+
+        <div class="mb-6">
+          <h2 class="headline text-2xl font-black text-[#3D2B1F]">Preguntas Frecuentes</h2>
+          <p class="text-gray-500 mt-1">Administre las preguntas y respuestas del sitio web. Cada par debe estar en <strong>inglés y español</strong>. Active el botón <em>Público</em> para que aparezca en el sitio.</p>
+        </div>
+
+        <div id="qa-list" class="space-y-4"></div>
+
+        <div class="mt-6 flex flex-wrap gap-3 items-center">
+          <button onclick="addQA()" class="btn btn-secondary">+ Agregar Pregunta</button>
+          <button onclick="saveQA()" class="btn btn-primary">💾 Guardar Preguntas</button>
+          <span id="qa-ok" class="text-green-700 font-semibold text-sm hidden">✓ Guardado</span>
+        </div>
+
+      </div><!-- /qa -->
+
+
+    </div><!-- /max-w-4xl -->
+  </main>
+
+</div><!-- /portal -->
+
+
+<!-- ══ TOAST ════════════════════════════════════════ -->
+<div id="toast" class="toast">Cambios guardados</div>
+
+
+<!-- ══ MODAL: CAMBIAR NIP ═══════════════════════════ -->
+<div id="pin-modal" class="modal-backdrop hidden">
+  <div class="card w-full max-w-sm shadow-2xl">
+    <h3 class="headline font-black text-xl text-[#3D2B1F] mb-5">Cambiar NIP</h3>
+    <div class="space-y-4">
+      <div>
+        <label>NIP actual</label>
+        <input type="password" id="pin-cur" placeholder="Su NIP actual">
+      </div>
+      <div>
+        <label>Nuevo NIP</label>
+        <input type="password" id="pin-new" placeholder="Mínimo 4 caracteres" maxlength="12">
+      </div>
+      <div>
+        <label>Confirmar nuevo NIP</label>
+        <input type="password" id="pin-cnf" placeholder="Repita el nuevo NIP" maxlength="12">
+      </div>
+      <p id="pin-err" class="text-red-600 text-sm font-semibold hidden"></p>
+    </div>
+    <div class="flex gap-3 mt-6">
+      <button onclick="changePIN()" class="btn btn-primary flex-1">Cambiar NIP</button>
+      <button onclick="closePinModal()" class="btn btn-secondary flex-1">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ── Constants ──────────────────────────────────────
+const DIAS       = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo'];
+const DIAS_ES    = { lunes:'Lunes', martes:'Martes', miercoles:'Miércoles', jueves:'Jueves',
+                     viernes:'Viernes', sabado:'Sábado', domingo:'Domingo' };
+const MESES_ES   = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const DIA_CORTO  = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const CICLO      = ['libre','asignado','ausente'];
+const CICLO_TEXT = { libre:'Libre', asignado:'Asignado', ausente:'Ausente' };
+const TEAM_COLS  = ['#C95E1E','#6B8F50','#1A4A70','#8B5A2B'];
+
+// ── Default data ────────────────────────────────────
+const DEFAULTS = {
+  horas: Object.fromEntries(
+    DIAS.map(d => [d, { abierto: true, apertura: '05:00', cierre: '18:00' }])
+  ),
+
+  equipo: [
+    { id:1, nombre:'Integrante 1' },
+    { id:2, nombre:'Integrante 2' },
+    { id:3, nombre:'Integrante 3' },
+    { id:4, nombre:'Integrante 4' },
+  ],
+
+  calendario: {},
+
+  prompts: [
+    { id:1, nombre:'Saludo de Bienvenida',
+      en:'Hello! Welcome to Roadrunners Handymen. How can we help you today?',
+      es:'¡Hola! Bienvenido a Roadrunners Handymen. ¿En qué podemos ayudarle hoy?' },
+    { id:2, nombre:'Solicitud de Presupuesto',
+      en:'For a free estimate, please describe the work needed and your location in the Phoenix area.',
+      es:'Para un presupuesto gratis, por favor describa el trabajo que necesita y su ubicación en el área de Phoenix.' },
+    { id:3, nombre:'Mensaje Fuera de Horario',
+      en:"We're currently unavailable. Our team starts at 5:00 AM every day. Leave us a message and we'll get back to you as soon as possible.",
+      es:'En este momento no estamos disponibles. Nuestro equipo empieza a las 5:00 AM todos los días. Déjenos un mensaje y le respondemos lo antes posible.' },
+    { id:4, nombre:'Confirmación de Solicitud',
+      en:'Thank you! We received your message and will contact you shortly.',
+      es:'¡Gracias! Recibimos su mensaje y le contactaremos en breve.' },
+  ],
+
+  qa: [
+    { id:1, publico:true,
+      pregunta_en:'What areas do you serve?',
+      respuesta_en:'We serve the greater Phoenix metropolitan area — including Scottsdale, Tempe, Chandler, Mesa, and surrounding cities.',
+      pregunta_es:'¿Qué áreas cubren?',
+      respuesta_es:'Servimos toda el área metropolitana de Phoenix: Scottsdale, Tempe, Chandler, Mesa y ciudades cercanas.' },
+    { id:2, publico:true,
+      pregunta_en:'How quickly can you respond?',
+      respuesta_en:'We typically respond within a few hours. Our team is available 7 days a week starting at 5:00 AM.',
+      pregunta_es:'¿Qué tan rápido responden?',
+      respuesta_es:'Normalmente respondemos en pocas horas. Estamos disponibles los 7 días de la semana desde las 5:00 AM.' },
+    { id:3, publico:true,
+      pregunta_en:'Do you offer free estimates?',
+      respuesta_en:'Yes! We provide free estimates for all jobs. Contact us by WhatsApp, phone, or email.',
+      pregunta_es:'¿Ofrecen presupuestos gratuitos?',
+      respuesta_es:'¡Sí! Damos presupuestos gratuitos para todos los trabajos. Contáctenos por WhatsApp, teléfono o correo.' },
+    { id:4, publico:true,
+      pregunta_en:'What types of work do you handle?',
+      respuesta_en:'Everything from landscaping, hardscape, and outdoor construction to full interior remodeling — kitchens, bathrooms, flooring, painting, plumbing, electrical, and more.',
+      pregunta_es:'¿Qué tipo de trabajos realizan?',
+      respuesta_es:'De todo: jardinería, construcción exterior, remodelación interior — cocinas, baños, pisos, pintura, plomería, electricidad y más.' },
+    { id:5, publico:true,
+      pregunta_en:'Are you licensed and insured?',
+      respuesta_en:'Yes, we are licensed and insured for your protection and peace of mind.',
+      pregunta_es:'¿Tienen licencia y seguro?',
+      respuesta_es:'Sí, contamos con licencia y seguro para su protección y tranquilidad.' },
+    { id:6, publico:false,
+      pregunta_en:'[Internal note — not public]',
+      respuesta_en:'',
+      pregunta_es:'[Nota interna — no pública]',
+      respuesta_es:'' },
+  ],
+};
+
+// ── Storage helpers ─────────────────────────────────
+function load(key) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; } catch { return null; }
+}
+function persist(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+function getData(key)      { return load('rr_' + key) ?? deepClone(DEFAULTS[key]); }
+function setData(key, val) { persist('rr_' + key, val); }
+function deepClone(v)      { return JSON.parse(JSON.stringify(v)); }
+
+// ── Auth ────────────────────────────────────────────
+const DEFAULT_PIN = '1234'; // CLARIFY: change before launch
+function getPin() { return localStorage.getItem('rr_admin_pin') || DEFAULT_PIN; }
+
+function checkPin() {
+  const v = document.getElementById('pin-input').value;
+  if (v === getPin()) {
+    hide('login-screen'); show('portal');
+    initAll();
+  } else {
+    show('login-error');
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-input').focus();
+  }
+}
+
+function logout() {
+  show('login-screen'); hide('portal');
+  document.getElementById('pin-input').value = '';
+  hide('login-error');
+}
+
+function showPinModal()  { show('pin-modal'); }
+function closePinModal() {
+  hide('pin-modal');
+  ['pin-cur','pin-new','pin-cnf'].forEach(id => document.getElementById(id).value = '');
+  hide('pin-err');
+}
+
+function changePIN() {
+  const cur = $('pin-cur').value;
+  const nw  = $('pin-new').value;
+  const cnf = $('pin-cnf').value;
+  const err = $('pin-err');
+
+  if (cur !== getPin())  { showErr(err, 'El NIP actual es incorrecto.'); return; }
+  if (nw.length < 4)     { showErr(err, 'El nuevo NIP debe tener al menos 4 caracteres.'); return; }
+  if (nw !== cnf)        { showErr(err, 'Los NIPs no coinciden. Intente de nuevo.'); return; }
+
+  localStorage.setItem('rr_admin_pin', nw);
+  closePinModal();
+  toast('NIP cambiado correctamente ✓');
+}
+
+function showErr(el, msg) { el.textContent = msg; show(el); }
+
+// ── Vault (Suscripciones) ────────────────────────────
+const VAULT_FIELDS = {
+  surge:    ['email','password','account_id','api_key','from_number','alert_phone',
+             'biz_name','legal_name','org_type','ein','industry','website',
+             'contact_name','contact_email','campaign_desc','notes'],
+  supabase: ['email','password','project_id','project_url','publishable_key',
+             'secret_key','vault_key','notes'],
+  anthropic:['email','password','api_key','notes'],
+  resend:   ['email','password','api_key','from_address','notes'],
+};
+
+function switchSubscription() {
+  const vendor = $('subSelect').value;
+  document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+  const panel = $('subPanel-' + vendor);
+  if (panel) panel.classList.add('active');
+  $('vaultSaveStatus').textContent = '';
+}
+
+function vaultMarkDirty() {
+  const el = $('vaultSaveStatus');
+  el.textContent = '● Sin guardar';
+  el.style.color = '#C95E1E';
+}
+
+function vaultTogglePassword(inputId, btn) {
+  const input = $(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = 'OCULTAR';
+  } else {
+    input.type = 'password';
+    btn.textContent = 'MOSTRAR';
+  }
+}
+
+function vaultSave(vendor) {
+  const fields = VAULT_FIELDS[vendor] || [];
+  const data = {};
+  fields.forEach(f => {
+    const el = $(vendor + '_' + f);
+    if (el) data[f] = el.value;
+  });
+  localStorage.setItem('rr_vault_' + vendor, JSON.stringify(data));
+  const status = $('vaultSaveStatus');
+  status.textContent = '✓ Guardado';
+  status.style.color = '#15803d';
+  setTimeout(() => { status.textContent = ''; }, 3000);
+  const label = { surge: 'Surge', supabase: 'Supabase', anthropic: 'Anthropic AI', resend: 'Resend' }[vendor] || vendor;
+  toast('Credenciales de ' + label + ' guardadas ✓');
+}
+
+function vaultLoad(vendor) {
+  const raw = localStorage.getItem('rr_vault_' + vendor);
+  if (!raw) return;
+  let data;
+  try { data = JSON.parse(raw); } catch(e) { return; }
+  const fields = VAULT_FIELDS[vendor] || [];
+  fields.forEach(f => {
+    const el = $(vendor + '_' + f);
+    if (el && data[f] !== undefined) el.value = data[f];
+  });
+}
+
+function vaultLoadAll() {
+  Object.keys(VAULT_FIELDS).forEach(v => vaultLoad(v));
+}
+
+// ── Tab switching ───────────────────────────────────
+function showTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-tab="${name}"]`).classList.add('active');
+  show('panel-' + name);
+}
+
+// ── Toast ────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+function showOK(id) {
+  const el = $(id);
+  show(el);
+  setTimeout(() => hide(el), 3000);
+  toast('Cambios guardados correctamente ✓');
+}
+
+// ── DOM helpers ─────────────────────────────────────
+function $(id)       { return document.getElementById(id); }
+function show(el)    { (typeof el === 'string' ? $(el) : el)?.classList.remove('hidden'); }
+function hide(el)    { (typeof el === 'string' ? $(el) : el)?.classList.add('hidden'); }
+function esc(str)    {
+  return String(str ?? '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+// ══════════════════════════════════════════════════
+// HORAS DE SERVICIO
+// ══════════════════════════════════════════════════
+function renderHours() {
+  const horas = getData('horas');
+  $('hours-tbody').innerHTML = DIAS.map(dia => {
+    const h = horas[dia] ?? { abierto:true, apertura:'05:00', cierre:'18:00' };
+    const dimStyle = !h.abierto ? 'style="opacity:0.3;pointer-events:none"' : '';
+    return `
+      <tr class="border-b border-gray-50 last:border-0">
+        <td class="py-3 pr-6 font-bold text-[#3D2B1F] text-sm">${DIAS_ES[dia]}</td>
+        <td class="py-3 px-4 text-center">
+          <input type="checkbox" id="h-open-${dia}" ${h.abierto ? 'checked' : ''}
+                 class="w-5 h-5 cursor-pointer accent-[#C95E1E]"
+                 onchange="toggleHourRow('${dia}')">
+        </td>
+        <td class="py-3 px-4" id="h-ap-wrap-${dia}" ${dimStyle}>
+          <input type="time" id="h-ap-${dia}" value="${esc(h.apertura)}" class="max-w-[130px]">
+        </td>
+        <td class="py-3 px-4" id="h-ci-wrap-${dia}" ${dimStyle}>
+          <input type="time" id="h-ci-${dia}" value="${esc(h.cierre)}" class="max-w-[130px]">
+        </td>
+      </tr>`;
+  }).join('');
+}
+
+function toggleHourRow(dia) {
+  const open = $(`h-open-${dia}`).checked;
+  [`h-ap-wrap-${dia}`, `h-ci-wrap-${dia}`].forEach(id => {
+    const el = $(id);
+    el.style.opacity      = open ? '1' : '0.3';
+    el.style.pointerEvents = open ? 'auto' : 'none';
+  });
+}
+
+function saveHours() {
+  const horas = {};
+  DIAS.forEach(dia => {
+    horas[dia] = {
+      abierto:  $(`h-open-${dia}`).checked,
+      apertura: $(`h-ap-${dia}`).value  || '05:00',
+      cierre:   $(`h-ci-${dia}`).value  || '18:00',
+    };
+  });
+  setData('horas', horas);
+  showOK('hours-ok');
+}
+
+
+// ══════════════════════════════════════════════════
+// CALENDARIO DEL EQUIPO
+// ══════════════════════════════════════════════════
+let calWeekOffset = 0;
+
+function getMondayOfWeek(offset) {
+  const today = new Date();
+  const dow   = today.getDay() || 7; // Mon=1 … Sun=7
+  const mon   = new Date(today);
+  mon.setDate(today.getDate() - dow + 1 + offset * 7);
+  mon.setHours(0,0,0,0);
+  return mon;
+}
+
+function datesOfWeek(offset) {
+  const mon = getMondayOfWeek(offset);
+  return Array.from({length:7}, (_, i) => {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    return d;
+  });
+}
+
+function isoDate(d) { return d.toISOString().split('T')[0]; }
+function todayISO()  { return isoDate(new Date()); }
+
+function renderTeamNameInputs() {
+  const team = getData('equipo');
+  $('team-name-inputs').innerHTML = team.map((m, i) => `
+    <div>
+      <label style="color:${TEAM_COLS[i]}">● Integrante ${i+1}</label>
+      <input type="text" id="tname-${i}" value="${esc(m.nombre)}" placeholder="Nombre">
+    </div>`).join('');
+}
+
+function saveTeamNames() {
+  const team = getData('equipo');
+  team.forEach((m, i) => {
+    m.nombre = $(`tname-${i}`).value.trim() || `Integrante ${i+1}`;
+  });
+  setData('equipo', team);
+  showOK('team-ok');
+  renderCal();
+}
+
+function renderCal() {
+  const team    = getData('equipo');
+  const calData = getData('calendario');
+  const dates   = datesOfWeek(calWeekOffset);
+  const todayStr = todayISO();
+
+  // Week label
+  const d0 = dates[0], d6 = dates[6];
+  $('week-label').textContent =
+    `${d0.getDate()} ${MESES_ES[d0.getMonth()]} – ${d6.getDate()} ${MESES_ES[d6.getMonth()]} ${d6.getFullYear()}`;
+
+  const headerCells = dates.map((d, i) => {
+    const ds = isoDate(d);
+    const isToday = ds === todayStr;
+    return `<th class="text-center py-2 px-1 text-xs font-bold ${isToday ? 'text-[#C95E1E]' : 'text-gray-400'}">
+      ${DIA_CORTO[i]}<br><span class="${isToday ? 'bg-[#C95E1E] text-white rounded-full px-1.5 py-0.5' : ''}">${d.getDate()}</span>
+    </th>`;
+  }).join('');
+
+  const rows = team.map((m, mi) => {
+    const cells = dates.map(d => {
+      const ds  = isoDate(d);
+      const key = `${ds}_${m.id}`;
+      const st  = calData[key] || 'libre';
+      return `<td class="p-1">
+        <div class="cal-cell cal-${st}" onclick="cycleCell('${key}')" id="cell-${key}">
+          ${CICLO_TEXT[st]}
+        </div>
+      </td>`;
+    }).join('');
+    return `<tr>
+      <td class="py-2 pr-4 font-bold text-sm whitespace-nowrap" style="color:${TEAM_COLS[mi]}">${esc(m.nombre)}</td>
+      ${cells}
+    </tr>`;
+  }).join('');
+
+  $('cal-grid').innerHTML = `
+    <table class="w-full border-collapse">
+      <thead><tr>
+        <th class="text-left py-2 pr-4 text-xs text-gray-400 font-semibold min-w-[110px]">Integrante</th>
+        ${headerCells}
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function cycleCell(key) {
+  const calData = getData('calendario');
+  const cur  = calData[key] || 'libre';
+  const next = CICLO[(CICLO.indexOf(cur) + 1) % CICLO.length];
+  if (next === 'libre') { delete calData[key]; } else { calData[key] = next; }
+  setData('calendario', calData);
+  const cell = $('cell-' + key);
+  if (cell) {
+    cell.className = `cal-cell cal-${next}`;
+    cell.textContent = CICLO_TEXT[next];
+  }
+}
+
+function weekNav(delta) { calWeekOffset += delta; renderCal(); }
+
+
+// ══════════════════════════════════════════════════
+// PROMPTS DEL SISTEMA
+// ══════════════════════════════════════════════════
+let _prompts = [];
+
+function renderPrompts() {
+  _prompts = getData('prompts');
+  $('prompts-list').innerHTML = _prompts.map((p, i) => `
+    <div class="card" id="prompt-${i}">
+      <div class="flex items-start gap-4 mb-4">
+        <div class="flex-1">
+          <label>Nombre del mensaje <span class="text-gray-400 font-normal">(uso interno)</span></label>
+          <input type="text" id="pname-${i}" value="${esc(p.nombre)}" placeholder="Ej: Saludo inicial">
+        </div>
+        <button onclick="deletePrompt(${i})"
+                class="btn btn-danger btn-sm mt-5 flex-shrink-0">Eliminar</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div>
+          <span class="badge-en">EN — Inglés</span>
+          <textarea id="pen-${i}" rows="5"
+                    placeholder="Write the English message here...">${esc(p.en)}</textarea>
+        </div>
+        <div>
+          <span class="badge-es">ES — Español</span>
+          <textarea id="pes-${i}" rows="5"
+                    placeholder="Escriba el mensaje en español aquí...">${esc(p.es)}</textarea>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function addPrompt() {
+  _prompts.push({ id: Date.now(), nombre:'Nuevo mensaje', en:'', es:'' });
+  setData('prompts', _prompts);
+  renderPrompts();
+  $(`prompt-${_prompts.length - 1}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function deletePrompt(i) {
+  if (!confirm('¿Desea eliminar este mensaje? No podrá recuperarlo.')) return;
+  _prompts.splice(i, 1);
+  setData('prompts', _prompts);
+  renderPrompts();
+}
+
+function savePrompts() {
+  _prompts = _prompts.map((p, i) => ({
+    id:     p.id,
+    nombre: $(`pname-${i}`).value.trim() || 'Sin nombre',
+    en:     $(`pen-${i}`).value.trim(),
+    es:     $(`pes-${i}`).value.trim(),
+  }));
+  setData('prompts', _prompts);
+  showOK('prompts-ok');
+}
+
+
+// ══════════════════════════════════════════════════
+// PREGUNTAS FRECUENTES
+// ══════════════════════════════════════════════════
+let _qa = [];
+
+function renderQA() {
+  _qa = getData('qa');
+  $('qa-list').innerHTML = _qa.map((q, i) => `
+    <div class="card" id="qa-${i}">
+
+      <!-- Header row -->
+      <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+        <span class="headline font-black text-[#3D2B1F] text-sm">Pregunta #${i + 1}</span>
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" id="qpub-${i}" ${q.publico ? 'checked' : ''}
+                   class="w-5 h-5 cursor-pointer accent-[#C95E1E]">
+            <span class="text-sm font-semibold text-gray-700">
+              Público <span class="text-gray-400 font-normal">(visible en el sitio web)</span>
+            </span>
+          </label>
+          <button onclick="deleteQA(${i})" class="btn btn-danger btn-sm">Eliminar</button>
+        </div>
+      </div>
+
+      <!-- Bilingual fields -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- English -->
+        <div class="space-y-3">
+          <span class="badge-en">EN — Inglés</span>
+          <div>
+            <label>Pregunta <span class="text-blue-700">(inglés)</span></label>
+            <input type="text" id="qqen-${i}" value="${esc(q.pregunta_en)}"
+                   placeholder="Question in English">
+          </div>
+          <div>
+            <label>Respuesta <span class="text-blue-700">(inglés)</span></label>
+            <textarea id="qaen-${i}" rows="4"
+                      placeholder="Answer in English...">${esc(q.respuesta_en)}</textarea>
+          </div>
+        </div>
+
+        <!-- Spanish -->
+        <div class="space-y-3">
+          <span class="badge-es">ES — Español</span>
+          <div>
+            <label>Pregunta <span class="text-green-700">(español)</span></label>
+            <input type="text" id="qqes-${i}" value="${esc(q.pregunta_es)}"
+                   placeholder="Pregunta en español">
+          </div>
+          <div>
+            <label>Respuesta <span class="text-green-700">(español)</span></label>
+            <textarea id="qaes-${i}" rows="4"
+                      placeholder="Respuesta en español...">${esc(q.respuesta_es)}</textarea>
+          </div>
+        </div>
+
+      </div>
+    </div>`).join('');
+}
+
+function addQA() {
+  _qa.push({ id: Date.now(), publico: true,
+    pregunta_en:'', respuesta_en:'', pregunta_es:'', respuesta_es:'' });
+  setData('qa', _qa);
+  renderQA();
+  $(`qa-${_qa.length - 1}`)?.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function deleteQA(i) {
+  if (!confirm('¿Desea eliminar esta pregunta? No podrá recuperarla.')) return;
+  _qa.splice(i, 1);
+  setData('qa', _qa);
+  renderQA();
+}
+
+function saveQA() {
+  _qa = _qa.map((q, i) => ({
+    id:           q.id,
+    publico:      $(`qpub-${i}`).checked,
+    pregunta_en:  $(`qqen-${i}`).value.trim(),
+    respuesta_en: $(`qaen-${i}`).value.trim(),
+    pregunta_es:  $(`qqes-${i}`).value.trim(),
+    respuesta_es: $(`qaes-${i}`).value.trim(),
+  }));
+  setData('qa', _qa);
+  showOK('qa-ok');
+}
+
+
+// ══════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════
+function initAll() {
+  renderHours();
+  renderTeamNameInputs();
+  renderCal();
+  renderPrompts();
+  renderQA();
+  vaultLoadAll();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  $('pin-input')?.focus();
+  // Close pin modal on backdrop click
+  $('pin-modal')?.addEventListener('click', e => {
+    if (e.target === $('pin-modal')) closePinModal();
+  });
+});
+</script>
+
+</body>
+</html>
