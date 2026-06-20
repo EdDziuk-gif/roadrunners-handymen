@@ -253,6 +253,64 @@
           </div>
         </div>
 
+        <!-- ── Excepciones ──────────────────────────── -->
+        <div class="mt-8">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="headline text-lg font-black text-[#3D2B1F]">📅 Excepciones de Horario</h3>
+              <p class="text-gray-500 text-sm mt-0.5">Días especiales que reemplazan el horario regular — feriados, citas, emergencias.</p>
+            </div>
+            <button onclick="showExcForm()" class="btn btn-primary btn-sm">+ Agregar Excepción</button>
+          </div>
+
+          <!-- Add exception form (hidden by default) -->
+          <div id="exc-form" class="card mb-4 border-2 border-[#C95E1E]/30 hidden">
+            <p class="font-semibold text-[#3D2B1F] mb-4">Nueva Excepción</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label>Fecha</label>
+                <input type="date" id="exc-fecha">
+              </div>
+              <div>
+                <label>Nota (opcional)</label>
+                <input type="text" id="exc-nota" placeholder="Ej: Feriado, Emergencia familiar…">
+              </div>
+            </div>
+            <div class="flex items-center gap-3 mb-4">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input type="checkbox" id="exc-cerrado" onchange="toggleExcClosed()"
+                  class="w-4 h-4 accent-[#C95E1E]">
+                <span class="font-semibold text-[#3D2B1F]">Cerrado todo el día</span>
+              </label>
+            </div>
+            <div id="exc-time-fields" class="grid grid-cols-2 gap-4 mb-4">
+              <div>
+                <label>Abre a las</label>
+                <input type="time" id="exc-apertura" value="09:00">
+              </div>
+              <div>
+                <label>Cierra a las</label>
+                <input type="time" id="exc-cierre" value="17:00">
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <button onclick="saveException()" class="btn btn-primary btn-sm">Guardar Excepción</button>
+              <button onclick="hideExcForm()" class="btn btn-secondary btn-sm">Cancelar</button>
+            </div>
+            <p id="exc-err" class="text-red-600 text-sm mt-2 hidden">Por favor seleccione una fecha.</p>
+          </div>
+
+          <!-- Exceptions list -->
+          <div class="card">
+            <div id="exc-list-empty" class="text-center py-10 text-gray-400">
+              <p class="text-2xl mb-2">📋</p>
+              <p class="text-sm">No hay excepciones registradas.</p>
+              <p class="text-xs mt-1">Agregue feriados o días especiales arriba.</p>
+            </div>
+            <div id="exc-list" class="hidden"></div>
+          </div>
+        </div>
+
       </div><!-- /horas -->
 
 
@@ -270,6 +328,7 @@
             <label class="sub-dropdown-label">Plataforma</label>
             <select class="sub-dropdown" id="subSelect" onchange="switchSubscription()">
               <option value="surge">Surge — Alertas SMS</option>
+              <option value="whatsapp">WhatsApp Business — Mensajería</option>
               <option value="supabase">Supabase — Base de datos</option>
               <option value="anthropic">Anthropic AI — Inteligencia Artificial</option>
               <option value="resend">Resend — Correo electrónico</option>
@@ -480,6 +539,63 @@
           </div>
           <button class="sub-save-btn" onclick="vaultSave('resend')">Guardar Resend</button>
         </div><!-- /resend -->
+
+        <!-- ══ WHATSAPP BUSINESS ══ -->
+        <div class="sub-panel" id="subPanel-whatsapp">
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">🔐 Credenciales de Cuenta</div>
+              <a href="https://business.facebook.com/" target="_blank" class="sub-link-btn">Tablero ↗</a>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>Correo de Meta / Facebook</label>
+                  <input type="email" id="whatsapp_email" placeholder="correo@ejemplo.com" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Contraseña de Meta</label>
+                  <div class="sub-card-wrap">
+                    <input type="password" id="whatsapp_password" placeholder="••••••••" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                    <button class="sub-card-toggle" onclick="vaultTogglePassword('whatsapp_password',this)">MOSTRAR</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sub-section">
+            <div class="sub-section-header">
+              <div class="sub-section-title">📱 Datos de la API</div>
+            </div>
+            <div class="sub-section-body">
+              <div class="sub-field-row">
+                <div class="sub-field"><label>ID de Número de Teléfono</label>
+                  <input type="text" id="whatsapp_phone_number_id" placeholder="Ej. 123456789012345" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>Número de Negocio</label>
+                  <input type="text" id="whatsapp_business_phone" placeholder="+1 (555) 000-0000" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field-row">
+                <div class="sub-field"><label>ID de Cuenta de Negocio (WABA)</label>
+                  <input type="text" id="whatsapp_waba_id" placeholder="Ej. 987654321098765" oninput="vaultMarkDirty()"></div>
+                <div class="sub-field"><label>ID de App de Meta</label>
+                  <input type="text" id="whatsapp_app_id" placeholder="Ej. 111222333444555" oninput="vaultMarkDirty()"></div>
+              </div>
+              <div class="sub-field"><label>Token de Acceso Permanente</label>
+                <div class="sub-card-wrap">
+                  <input type="password" id="whatsapp_access_token" placeholder="EAAxxxxxx…" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                  <button class="sub-card-toggle" onclick="vaultTogglePassword('whatsapp_access_token',this)">MOSTRAR</button>
+                </div>
+              </div>
+              <div class="sub-field"><label>Token de Verificación Webhook</label>
+                <div class="sub-card-wrap">
+                  <input type="password" id="whatsapp_webhook_verify_token" placeholder="Clave secreta para el webhook" autocomplete="off" style="padding-right:3.5rem" oninput="vaultMarkDirty()">
+                  <button class="sub-card-toggle" onclick="vaultTogglePassword('whatsapp_webhook_verify_token',this)">MOSTRAR</button>
+                </div>
+              </div>
+              <div class="sub-field"><label>Notas</label>
+                <textarea id="whatsapp_notes" rows="4" oninput="vaultMarkDirty()"></textarea>
+              </div>
+            </div>
+          </div>
+          <button class="sub-save-btn" onclick="vaultSave('whatsapp')">Guardar WhatsApp Business</button>
+        </div><!-- /whatsapp -->
 
       </div><!-- /suscripciones -->
 
@@ -742,6 +858,8 @@ const VAULT_FIELDS = {
   surge:    ['email','password','account_id','api_key','from_number','alert_phone',
              'biz_name','legal_name','org_type','ein','industry','website',
              'contact_name','contact_email','campaign_desc','notes'],
+  whatsapp: ['email','password','phone_number_id','business_phone','waba_id',
+             'app_id','access_token','webhook_verify_token','notes'],
   supabase: ['email','password','project_id','project_url','publishable_key',
              'secret_key','vault_key','notes'],
   anthropic:['email','password','api_key','notes'],
@@ -1148,6 +1266,91 @@ function saveQA() {
 // ══════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════
+// ── Excepciones de Horario ───────────────────────────
+function loadExceptions() {
+  var raw = localStorage.getItem('rr_horas_excepciones');
+  return raw ? JSON.parse(raw) : [];
+}
+function saveExceptions(list) {
+  localStorage.setItem('rr_horas_excepciones', JSON.stringify(list));
+}
+
+function showExcForm() {
+  show('exc-form');
+  hide('exc-err');
+  $('exc-fecha').value = '';
+  $('exc-nota').value  = '';
+  $('exc-cerrado').checked = false;
+  $('exc-apertura').value  = '09:00';
+  $('exc-cierre').value    = '17:00';
+  show('exc-time-fields');
+}
+function hideExcForm() { hide('exc-form'); }
+
+function toggleExcClosed() {
+  var closed = $('exc-cerrado').checked;
+  closed ? hide('exc-time-fields') : show('exc-time-fields');
+}
+
+function saveException() {
+  var fecha = $('exc-fecha').value;
+  if (!fecha) { show('exc-err'); return; }
+  hide('exc-err');
+  var list = loadExceptions();
+  // Remove any existing entry for this date
+  list = list.filter(function(e){ return e.fecha !== fecha; });
+  var closed = $('exc-cerrado').checked;
+  list.push({
+    fecha:    fecha,
+    cerrado:  closed,
+    apertura: closed ? '' : $('exc-apertura').value,
+    cierre:   closed ? '' : $('exc-cierre').value,
+    nota:     $('exc-nota').value.trim()
+  });
+  // Sort by date
+  list.sort(function(a,b){ return a.fecha < b.fecha ? -1 : 1; });
+  saveExceptions(list);
+  hide('exc-form');
+  renderExceptions();
+  toast('Excepción guardada ✓');
+}
+
+function deleteException(fecha) {
+  var list = loadExceptions().filter(function(e){ return e.fecha !== fecha; });
+  saveExceptions(list);
+  renderExceptions();
+  toast('Excepción eliminada');
+}
+
+function renderExceptions() {
+  var list = loadExceptions();
+  if (!list.length) {
+    show('exc-list-empty');
+    hide('exc-list');
+    return;
+  }
+  hide('exc-list-empty');
+  show('exc-list');
+  var dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  $('exc-list').innerHTML = list.map(function(e) {
+    // Parse date safely (avoid timezone shift)
+    var parts = e.fecha.split('-');
+    var d = new Date(+parts[0], +parts[1]-1, +parts[2]);
+    var label = dias[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear();
+    var status = e.cerrado
+      ? '<span class="text-red-600 font-semibold">Cerrado</span>'
+      : '<span class="text-green-700 font-semibold">' + (e.apertura||'?') + ' – ' + (e.cierre||'?') + '</span>';
+    var nota = e.nota ? ' <span class="text-gray-400 text-xs">· ' + esc(e.nota) + '</span>' : '';
+    return '<div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0 gap-4">' +
+      '<div>' +
+        '<span class="font-semibold text-[#3D2B1F] text-sm">' + label + '</span>' + nota +
+        '<div class="text-sm mt-0.5">' + status + '</div>' +
+      '</div>' +
+      '<button onclick="deleteException(\'' + e.fecha + '\')" class="btn btn-danger btn-sm flex-shrink-0">Eliminar</button>' +
+    '</div>';
+  }).join('');
+}
+
 function initAll() {
   renderHours();
   renderTeamNameInputs();
@@ -1155,6 +1358,7 @@ function initAll() {
   renderPrompts();
   renderQA();
   vaultLoadAll();
+  renderExceptions();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -66,6 +66,80 @@
         rgba(20,12,4,0.70) 100%
       );
     }
+
+    /* ── Chat Widget ─────────────────────────────────── */
+    #rr-chat-wrap {
+      position: fixed; bottom: 22px; right: 18px;
+      z-index: 200; display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+    }
+    .rr-chat-btn {
+      width: 62px; height: 62px; border-radius: 50%;
+      background: #C95E1E; border: none; cursor: pointer;
+      box-shadow: 0 4px 22px rgba(201,94,30,.55);
+      font-size: 28px; display: flex; align-items: center; justify-content: center;
+      transition: transform .18s, box-shadow .18s; flex-shrink: 0;
+    }
+    .rr-chat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 30px rgba(201,94,30,.70); }
+    .rr-chat-panel {
+      width: 320px; height: 490px;
+      background: white; border-radius: 18px;
+      box-shadow: 0 8px 44px rgba(0,0,0,.20);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    @media (max-width: 380px) { .rr-chat-panel { width: calc(100vw - 20px); } }
+    .rr-chat-header {
+      background: #3D2B1F; color: white;
+      padding: 13px 14px; display: flex; align-items: center;
+      justify-content: space-between; flex-shrink: 0;
+    }
+    .rr-chat-hinfo { display: flex; align-items: center; gap: 10px; }
+    .rr-chat-avatar {
+      width: 38px; height: 38px; background: #C95E1E; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex-shrink: 0;
+    }
+    .rr-chat-hname  { font-family: 'Montserrat',sans-serif; font-weight: 700; font-size: 14px; }
+    .rr-chat-hstatus{ font-size: 11px; color: rgba(255,255,255,.6); margin-top: 1px; }
+    .rr-chat-close  { background: none; border: none; color: white; font-size: 18px; cursor: pointer; opacity: .55; padding: 4px; line-height: 1; }
+    .rr-chat-close:hover { opacity: 1; }
+    .rr-chat-msgs {
+      flex: 1; overflow-y: auto; padding: 14px 11px;
+      display: flex; flex-direction: column; gap: 9px; background: #F8F6F2;
+    }
+    .rr-msg {
+      max-width: 86%; padding: 10px 13px; border-radius: 14px;
+      font-size: 14px; line-height: 1.45;
+      animation: rr-pop .18s ease;
+    }
+    @keyframes rr-pop { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
+    .rr-bot { background: white; color: #1A1A1A; border-radius: 4px 14px 14px 14px; box-shadow: 0 1px 4px rgba(0,0,0,.08); align-self: flex-start; }
+    .rr-usr { background: #C95E1E; color: white; border-radius: 14px 4px 14px 14px; align-self: flex-end; }
+    .rr-typ { background: white; color: #AAA; font-style: italic; border-radius: 4px 14px 14px 14px; align-self: flex-start; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .rr-chips { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; max-width: 100%; }
+    .rr-chip {
+      background: white; border: 1.5px solid #C95E1E; color: #C95E1E;
+      border-radius: 20px; padding: 6px 13px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .13s; font-family: 'Open Sans',sans-serif;
+    }
+    .rr-chip:hover { background: #C95E1E; color: white; }
+    .rr-chat-input { padding: 10px 11px; border-top: 1px solid #E8E4DC; background: white; flex-shrink: 0; }
+    .rr-irow { display: flex; gap: 7px; align-items: center; }
+    .rr-tin {
+      flex: 1; padding: 10px 12px; border: 1.5px solid #D1C4B8; border-radius: 10px;
+      font-size: 14px; font-family: 'Open Sans',sans-serif; outline: none;
+    }
+    .rr-tin:focus { border-color: #C95E1E; }
+    .rr-go  {
+      background: #C95E1E; color: white; border: none; border-radius: 10px;
+      padding: 10px 14px; font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity .13s;
+    }
+    .rr-go:hover { opacity: .85; }
+    .rr-full-btn {
+      width: 100%; padding: 13px; background: #C95E1E; color: white; border: none;
+      border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+      font-family: 'Montserrat',sans-serif; transition: opacity .13s;
+    }
+    .rr-full-btn:hover { opacity: .85; }
   </style>
 </head>
 
@@ -519,6 +593,35 @@
 
 
 <!-- ════════════════════════════════════════════════════
+     CHAT WIDGET
+════════════════════════════════════════════════════ -->
+<div id="rr-chat-wrap">
+  <!-- Panel (hidden by default) -->
+  <div id="rr-chat-panel" class="rr-chat-panel" style="display:none">
+    <div class="rr-chat-header">
+      <div class="rr-chat-hinfo">
+        <div class="rr-chat-avatar">🏃</div>
+        <div>
+          <div class="rr-chat-hname">Roadrunners Handymen</div>
+          <div class="rr-chat-hstatus" id="rr-status">
+            <span data-lang="en">Here to help · 7 days</span>
+            <span data-lang="es">Aquí para ayudar · 7 días</span>
+          </div>
+        </div>
+      </div>
+      <button class="rr-chat-close" onclick="rrCloseChat()" aria-label="Close chat">✕</button>
+    </div>
+    <div class="rr-chat-msgs" id="rr-msgs"></div>
+    <div class="rr-chat-input" id="rr-input"></div>
+  </div>
+  <!-- Bubble button -->
+  <button class="rr-chat-btn" onclick="rrToggleChat()" id="rr-chat-btn" aria-label="Chat with us">
+    <span id="rr-chat-icon">💬</span>
+  </button>
+</div>
+
+
+<!-- ════════════════════════════════════════════════════
      SCRIPTS
 ════════════════════════════════════════════════════ -->
 <script>
@@ -642,6 +745,239 @@
     updateUI();
     renderFAQ();
   });
+</script>
+
+<!-- ── Chat Bot Script ─────────────────────────────── -->
+<script>
+(function() {
+  var EMAIL_TO = 'roadrunnersdandymen67@gmail.com';
+
+  var T = {
+    en: {
+      greeting:    "Hi! 👋 I'm the Roadrunners assistant. What kind of work do you need?",
+      job_q:       "Choose a category:",
+      job_opts:    ["🌿 Landscaping", "🧱 Construction", "🏠 Remodeling", "🔧 Other"],
+      desc_q:      "Great! Briefly describe the job:",
+      desc_ph:     "e.g. install new faucet, lay tile in bathroom…",
+      name_q:      "What's your name?",
+      name_ph:     "First & last name",
+      phone_q:     "Best phone number for Pedro to reach you?",
+      phone_ph:    "(480) 555-0100",
+      cb_q:        "When would you like Pedro to call?",
+      cb_opts:     ["☀️ Morning (5–11am)", "🌤 Afternoon (11am–5pm)", "🌙 Evening (5–8pm)"],
+      confirm:     function(n){ return "Thanks, " + n + "! Tap below to send your request — Pedro will call you during your preferred time. 📲"; },
+      send_btn:    "📨 Send Request to Pedro",
+      sent:        "Your request is on its way! Pedro will call you soon. Thank you! 🙏",
+      typing:      "typing…",
+    },
+    es: {
+      greeting:    "¡Hola! 👋 Soy el asistente de Roadrunners. ¿Qué tipo de trabajo necesita?",
+      job_q:       "Elija una categoría:",
+      job_opts:    ["🌿 Jardinería", "🧱 Construcción", "🏠 Remodelación", "🔧 Otro"],
+      desc_q:      "¡Entendido! Describa brevemente el trabajo:",
+      desc_ph:     "Ej: instalar llave nueva, poner piso en baño…",
+      name_q:      "¿Cuál es su nombre?",
+      name_ph:     "Nombre y apellido",
+      phone_q:     "¿Cuál es su número para que Pedro le llame?",
+      phone_ph:    "(480) 555-0100",
+      cb_q:        "¿Cuándo prefiere que Pedro le llame?",
+      cb_opts:     ["☀️ Mañana (5–11am)", "🌤 Tarde (11am–5pm)", "🌙 Noche (5–8pm)"],
+      confirm:     function(n){ return "¡Gracias, " + n + "! Toque el botón para enviar su solicitud — Pedro le llamará en su horario preferido. 📲"; },
+      send_btn:    "📨 Enviar Solicitud a Pedro",
+      sent:        "¡Su solicitud está en camino! Pedro le llamará pronto. ¡Muchas gracias! 🙏",
+      typing:      "escribiendo…",
+    }
+  };
+
+  var _open = false, _started = false, _data = {};
+
+  function tx() { return T[window.__rrLang || 'en']; }
+
+  function rrToggleChat() { _open ? rrCloseChat() : rrOpenChat(); }
+  function rrOpenChat() {
+    _open = true;
+    document.getElementById('rr-chat-panel').style.display = 'flex';
+    document.getElementById('rr-chat-icon').textContent = '✕';
+    if (!_started) { _started = true; _startChat(); }
+    _scrollBottom();
+  }
+  function rrCloseChat() {
+    _open = false;
+    document.getElementById('rr-chat-panel').style.display = 'none';
+    document.getElementById('rr-chat-icon').textContent = '💬';
+  }
+
+  function _scrollBottom() {
+    var m = document.getElementById('rr-msgs');
+    if (m) setTimeout(function(){ m.scrollTop = m.scrollHeight; }, 50);
+  }
+
+  function _addMsg(text, cls) {
+    var m = document.getElementById('rr-msgs');
+    var d = document.createElement('div');
+    d.className = 'rr-msg ' + cls;
+    d.textContent = text;
+    m.appendChild(d);
+    _scrollBottom();
+    return d;
+  }
+  function _bot(t)  { return _addMsg(t, 'rr-bot'); }
+  function _user(t) { return _addMsg(t, 'rr-usr'); }
+
+  function _type(text, delay, cb) {
+    var m = document.getElementById('rr-msgs');
+    var el = document.createElement('div');
+    el.className = 'rr-msg rr-typ';
+    el.textContent = tx().typing;
+    m.appendChild(el);
+    _scrollBottom();
+    setTimeout(function(){
+      m.removeChild(el);
+      _bot(text);
+      if (cb) cb();
+    }, delay || 750);
+  }
+
+  function _setInput(html) {
+    document.getElementById('rr-input').innerHTML = html;
+  }
+
+  function _chips(opts, onPick) {
+    var m = document.getElementById('rr-msgs');
+    var wrap = document.createElement('div');
+    wrap.className = 'rr-chips';
+    opts.forEach(function(opt){
+      var b = document.createElement('button');
+      b.className = 'rr-chip';
+      b.textContent = opt;
+      b.onclick = function(){
+        if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+        _user(opt);
+        onPick(opt);
+      };
+      wrap.appendChild(b);
+    });
+    m.appendChild(wrap);
+    _scrollBottom();
+  }
+
+  function _textInput(ph, onSubmit) {
+    _setInput(
+      '<div class="rr-irow">' +
+      '<input class="rr-tin" id="rr-ti" placeholder="' + ph + '">' +
+      '<button class="rr-go" onclick="_rrGo()">→</button>' +
+      '</div>'
+    );
+    var el = document.getElementById('rr-ti');
+    if (el) {
+      el.focus();
+      el.addEventListener('keydown', function(e){ if(e.key==='Enter') _rrGo(); });
+    }
+    window._rrSubmit = onSubmit;
+  }
+
+  window._rrGo = function() {
+    var el = document.getElementById('rr-ti');
+    if (!el) return;
+    var v = el.value.trim();
+    if (!v) return;
+    _user(v);
+    _setInput('');
+    if (window._rrSubmit) window._rrSubmit(v);
+  };
+
+  window.rrToggleChat = rrToggleChat;
+  window.rrCloseChat  = rrCloseChat;
+
+  function _startChat() {
+    document.getElementById('rr-msgs').innerHTML = '';
+    _setInput('');
+    _data = {};
+
+    // Try admin-managed greeting (first prompt entry)
+    var greeting = tx().greeting;
+    try {
+      var prompts = JSON.parse(localStorage.getItem('rr_prompts') || '[]');
+      if (prompts.length) {
+        var lang = window.__rrLang || 'en';
+        var custom = lang === 'es' ? prompts[0].es : prompts[0].en;
+        if (custom && custom.trim()) greeting = custom;
+      }
+    } catch(e){}
+
+    _type(greeting, 600, function(){ _askJob(); });
+  }
+
+  function _askJob() {
+    _type(tx().job_q, 400, function(){
+      _chips(tx().job_opts, function(v){
+        _data.job_type = v;
+        _askDesc();
+      });
+    });
+  }
+  function _askDesc() {
+    _type(tx().desc_q, 550, function(){
+      _textInput(tx().desc_ph, function(v){ _data.description = v; _askName(); });
+    });
+  }
+  function _askName() {
+    _type(tx().name_q, 550, function(){
+      _textInput(tx().name_ph, function(v){ _data.name = v; _askPhone(); });
+    });
+  }
+  function _askPhone() {
+    _type(tx().phone_q, 550, function(){
+      _textInput(tx().phone_ph, function(v){ _data.phone = v; _askCallback(); });
+    });
+  }
+  function _askCallback() {
+    _type(tx().cb_q, 550, function(){
+      _chips(tx().cb_opts, function(v){
+        _data.callback = v;
+        _showConfirm();
+      });
+    });
+  }
+  function _showConfirm() {
+    _type(tx().confirm(_data.name || ''), 600, function(){
+      _setInput(
+        '<button class="rr-full-btn" onclick="rrSendLead()">' + tx().send_btn + '</button>'
+      );
+    });
+  }
+
+  window.rrSendLead = function() {
+    var lang = window.__rrLang || 'en';
+    var isEs = lang === 'es';
+    var subj = isEs
+      ? 'Solicitud: ' + (_data.job_type||'') + ' — ' + (_data.name||'')
+      : 'Request: '   + (_data.job_type||'') + ' — ' + (_data.name||'');
+    var body = isEs
+      ? 'Nombre: '          + (_data.name||'')        + '\n'
+      + 'Teléfono: '        + (_data.phone||'')       + '\n'
+      + 'Tipo de trabajo: ' + (_data.job_type||'')    + '\n'
+      + 'Descripción: '     + (_data.description||'') + '\n'
+      + 'Horario preferido: '+ (_data.callback||'')   + '\n\n'
+      + 'Enviado desde: roadrunners.frontframe.co'
+      : 'Name: '      + (_data.name||'')        + '\n'
+      + 'Phone: '     + (_data.phone||'')       + '\n'
+      + 'Job type: '  + (_data.job_type||'')    + '\n'
+      + 'Description: '+ (_data.description||'')+ '\n'
+      + 'Preferred callback: ' + (_data.callback||'') + '\n\n'
+      + 'Sent from: roadrunners.frontframe.co';
+
+    window.open(
+      'mailto:' + EMAIL_TO
+      + '?subject=' + encodeURIComponent(subj)
+      + '&body='    + encodeURIComponent(body),
+      '_blank'
+    );
+    _setInput('');
+    _bot(tx().sent);
+    _scrollBottom();
+  };
+})();
 </script>
 
 </body>
