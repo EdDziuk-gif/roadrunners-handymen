@@ -932,7 +932,7 @@ function showTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelector(`[data-tab="${name}"]`).classList.add('active');
-  show('panel-' + name);
+  document.getElementById('panel-' + name).classList.add('active');
 }
 
 // ── Toast ────────────────────────────────────────────
