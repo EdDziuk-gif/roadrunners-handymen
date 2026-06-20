@@ -160,9 +160,12 @@
       <input type="password" id="pin-input" maxlength="12"
              placeholder="••••••"
              class="text-center text-2xl tracking-[0.4em] mb-4"
-             onkeydown="if(event.key==='Enter') checkPin()">
+             autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+             inputmode="numeric"
+             onkeydown="if(event.key==='Enter') checkPin()"
+             onkeyup="if(event.key==='Enter') checkPin()">
 
-      <button onclick="checkPin()" class="btn btn-primary w-full text-base">
+      <button type="button" onclick="checkPin()" class="btn btn-primary w-full text-base" style="min-height:52px">
         Entrar al Sistema
       </button>
 
@@ -698,15 +701,15 @@
     <div class="space-y-4">
       <div>
         <label>NIP actual</label>
-        <input type="password" id="pin-cur" placeholder="Su NIP actual">
+        <input type="password" id="pin-cur" placeholder="Su NIP actual" autocomplete="off" autocorrect="off" autocapitalize="none" inputmode="numeric">
       </div>
       <div>
         <label>Nuevo NIP</label>
-        <input type="password" id="pin-new" placeholder="Mínimo 4 caracteres" maxlength="12">
+        <input type="password" id="pin-new" placeholder="Mínimo 4 caracteres" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="none" inputmode="numeric">
       </div>
       <div>
         <label>Confirmar nuevo NIP</label>
-        <input type="password" id="pin-cnf" placeholder="Repita el nuevo NIP" maxlength="12">
+        <input type="password" id="pin-cnf" placeholder="Repita el nuevo NIP" maxlength="12" autocomplete="off" autocorrect="off" autocapitalize="none" inputmode="numeric">
       </div>
       <p id="pin-err" class="text-red-600 text-sm font-semibold hidden"></p>
     </div>
