@@ -21,7 +21,8 @@ html,body{
 #app{
   display:flex;
   flex-direction:column;
-  height:100dvh;
+  height:100vh;   /* Safari <15.4 fallback */
+  height:100dvh;  /* adjusts for iOS toolbar show/hide */
   max-width:430px;
   margin:0 auto;
 }
@@ -86,6 +87,7 @@ html,body{
 
 .slide{
   position:absolute;
+  top:0; right:0; bottom:0; left:0; /* Safari <14.1 fallback for inset */
   inset:0;
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
@@ -303,7 +305,7 @@ html,body{
 <div id="app">
 
   <div id="topbar">
-    <span id="slide-counter">1 / 8</span>
+    <span id="slide-counter">1 / 9</span>
     <span id="topbar-label">Presenter Guide</span>
     <a id="ipad-link" href="#" target="_blank" rel="noopener" class="hidden">iPad ↗</a>
   </div>
@@ -549,19 +551,19 @@ function goTo(n, dir) {
   toEl.style.opacity = '1';
   toEl.style.pointerEvents = 'none';
 
-  // Force reflow
-  toEl.getBoundingClientRect();
-
-  // Set transitions
-  var t = 'transform 220ms ease, opacity 220ms ease';
-  fromEl.style.transition = t;
-  toEl.style.transition = t;
-
-  // Animate
-  fromEl.style.transform = fwd ? 'translateX(-28%)' : 'translateX(28%)';
-  fromEl.style.opacity = '0';
-  toEl.style.transform = 'translateX(0)';
-  toEl.scrollTop = 0;
+  // Double-rAF: Safari needs two frames to commit initial paint state
+  // before a CSS transition will fire reliably.
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      var t = 'transform 220ms ease, opacity 220ms ease';
+      fromEl.style.transition = t;
+      toEl.style.transition = t;
+      fromEl.style.transform = fwd ? 'translateX(-28%)' : 'translateX(28%)';
+      fromEl.style.opacity = '0';
+      toEl.style.transform = 'translateX(0)';
+      toEl.scrollTop = 0;
+    });
+  });
 
   setTimeout(function() {
     // Clean up from slide
