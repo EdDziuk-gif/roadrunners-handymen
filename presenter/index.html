@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Roadrunners — Presenter Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+html,body{
+  height:100%;
+  background:#0F0700;
+  color:#F8F6F2;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  -webkit-text-size-adjust:100%;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+#app{
+  display:flex;
+  flex-direction:column;
+  height:100dvh;
+  max-width:430px;
+  margin:0 auto;
+}
+
+/* ── TOP BAR ─────────────────────────────────── */
+#topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:10px 16px;
+  padding-top:calc(10px + env(safe-area-inset-top));
+  background:#0F0700;
+  border-bottom:1px solid rgba(201,94,30,.14);
+  flex-shrink:0;
+}
+#slide-counter{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:.10em;
+  color:rgba(248,246,242,.3);
+  flex-shrink:0;
+  min-width:36px;
+}
+#topbar-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:rgba(248,246,242,.16);
+  flex:1;
+  text-align:center;
+}
+#ipad-link{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:.07em;
+  text-transform:uppercase;
+  color:#C95E1E;
+  text-decoration:none;
+  padding:4px 9px;
+  border:1px solid rgba(201,94,30,.28);
+  border-radius:6px;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:border-color .14s,opacity .14s;
+}
+#ipad-link:hover,
+#ipad-link:focus-visible{border-color:rgba(201,94,30,.6);outline:none}
+#ipad-link.hidden{opacity:0;pointer-events:none}
+
+/* ── SLIDES WRAP ─────────────────────────────── */
+#slides-wrap{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  touch-action:pan-y;
+}
+
+.slide{
+  position:absolute;
+  inset:0;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:20px 20px 0;
+  opacity:0;
+  pointer-events:none;
+  will-change:transform,opacity;
+}
+.slide.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* ── SLIDE CONTENT ───────────────────────────── */
+.slide-moment{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+  color:#C95E1E;
+  margin-bottom:3px;
+}
+.slide-title{
+  font-size:22px;
+  font-weight:700;
+  color:#F8F6F2;
+  line-height:1.2;
+  margin-bottom:20px;
+}
+
+.block{margin-bottom:14px}
+.block-label{
+  font-size:8.5px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(201,94,30,.68);
+  margin-bottom:5px;
+}
+.block-body{
+  font-size:15px;
+  line-height:1.55;
+  color:#F8F6F2;
+}
+.block-body.muted{
+  color:rgba(248,246,242,.58);
+  font-size:14px;
+}
+.block-body.italic{font-style:italic}
+
+.quote{
+  display:block;
+  padding-left:11px;
+  border-left:2px solid rgba(201,94,30,.42);
+  font-style:italic;
+}
+
+.action-note{
+  font-size:12px;
+  font-style:italic;
+  color:rgba(201,94,30,.62);
+  margin:4px 0 8px 11px;
+}
+
+.bilingual{
+  font-size:12px;
+  color:rgba(248,246,242,.27);
+  font-style:italic;
+  margin-top:7px;
+}
+
+.scenario-label{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:#C95E1E;
+  margin-bottom:4px;
+}
+.scenario-divider{
+  height:1px;
+  background:rgba(201,94,30,.17);
+  margin:13px 0;
+}
+
+.slide-pad{height:24px}
+
+/* ── BOTTOM NAV ──────────────────────────────── */
+#nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 16px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  background:#0F0700;
+  border-top:1px solid rgba(201,94,30,.11);
+  flex-shrink:0;
+}
+.nav-btn{
+  width:38px;height:38px;
+  border-radius:50%;
+  border:1.5px solid rgba(201,94,30,.27);
+  background:rgba(201,94,30,.05);
+  color:#C95E1E;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background .14s,border-color .14s;
+}
+.nav-btn:hover,
+.nav-btn:focus-visible{
+  background:rgba(201,94,30,.14);
+  border-color:rgba(201,94,30,.55);
+  outline:none;
+}
+.nav-btn:disabled{opacity:.2;pointer-events:none}
+#dots{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;flex:1;flex-wrap:wrap;
+}
+.dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:rgba(248,246,242,.18);
+  border:none;padding:0;
+  cursor:pointer;
+  flex-shrink:0;
+  transition:background .15s,transform .15s;
+}
+.dot.active{background:#C95E1E;transform:scale(1.4)}
+.dot:focus-visible{outline:2px solid #C95E1E;outline-offset:2px}
+
+/* ── CONTACT BUTTON ──────────────────────────── */
+#contact-btn{
+  position:fixed;
+  right:14px;
+  bottom:calc(88px + env(safe-area-inset-bottom));
+  z-index:200;
+  width:42px;height:42px;
+  border-radius:50%;
+  background:#1E0E06;
+  border:1.5px solid rgba(201,94,30,.38);
+  box-shadow:0 4px 18px rgba(0,0,0,.55);
+  color:#C95E1E;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:background .14s,transform .14s;
+}
+#contact-btn:hover,
+#contact-btn:focus-visible{
+  background:#2A1508;
+  transform:scale(1.06);
+  outline:none;
+}
+
+/* ── CONTACT PANEL ───────────────────────────── */
+#contact-panel{
+  position:fixed;
+  right:12px;
+  bottom:calc(142px + env(safe-area-inset-bottom));
+  width:258px;
+  background:#1E0E06;
+  border:1px solid rgba(201,94,30,.22);
+  border-radius:14px;
+  box-shadow:0 8px 32px rgba(0,0,0,.65);
+  z-index:199;
+  transform-origin:bottom right;
+  transform:scale(.88) translateY(10px);
+  opacity:0;
+  pointer-events:none;
+  transition:transform .2s cubic-bezier(.34,1.28,.64,1),opacity .16s ease;
+}
+#contact-panel.open{
+  transform:scale(1) translateY(0);
+  opacity:1;
+  pointer-events:auto;
+}
+.contact-head{
+  padding:13px 15px 11px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+  color:rgba(248,246,242,.78);
+  line-height:1.5;
+}
+.contact-actions{
+  padding:9px 10px 10px;
+  display:flex;flex-direction:column;gap:5px;
+}
+.contact-action{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 12px;
+  background:rgba(255,255,255,.035);
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:8px;
+  color:rgba(248,246,242,.8);
+  font-size:13px;font-weight:600;
+  text-decoration:none;cursor:pointer;
+  transition:background .13s,border-color .13s;
+  width:100%;text-align:left;
+}
+.contact-action:hover,
+.contact-action:focus-visible{
+  background:rgba(201,94,30,.12);
+  border-color:rgba(201,94,30,.38);
+  outline:none;
+}
+.contact-action svg{color:#C95E1E;flex-shrink:0}
+
+:focus-visible{outline:2px solid #C95E1E;outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div id="topbar">
+    <span id="slide-counter">1 / 8</span>
+    <span id="topbar-label">Presenter Guide</span>
+    <a id="ipad-link" href="#" target="_blank" rel="noopener" class="hidden">iPad ↗</a>
+  </div>
+
+  <div id="slides-wrap"><!-- rendered by JS --></div>
+
+  <nav id="nav" aria-label="Slide navigation">
+    <button class="nav-btn" id="prev-btn" aria-label="Previous" disabled>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div id="dots" role="tablist" aria-label="Slides"></div>
+    <button class="nav-btn" id="next-btn" aria-label="Next">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+  </nav>
+
+</div>
+
+<!-- floating contact button -->
+<button id="contact-btn" aria-label="Contact" aria-expanded="false" aria-controls="contact-panel">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+
+<div id="contact-panel" role="dialog" aria-modal="true" aria-label="Contact Pedro">
+  <div class="contact-head">Hi. If you want to reach Pedro or have questions, I'm here for that.</div>
+  <div class="contact-actions">
+    <a href="tel:+14805295032" class="contact-action">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.4 11.4 0 0 0 3.58.57 1 1 0 0 1 1 1v3.5a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02l-2.2 2.2z"/></svg>
+      Call Pedro — (480) 529-5032
+    </a>
+    <a href="https://wa.link/18rr9n" target="_blank" rel="noopener" class="contact-action">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp Pedro
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Slide data ──────────────────────────────────────────────────────
+const BP = 'https://roadrunners.frontframe.co/blueprint/';
+
+const SLIDES = [
+  {
+    moment: 'OPEN',
+    title: 'Set the frame',
+    section: null,
+    anchor: null,
+    say: '“Pedro, I want to show you something. We put together a first draft of what a website for Roadrunners could look like. This is not finished — I want to hear what feels right and what doesn’t. Five minutes.”',
+    ask: 'Nothing yet. iPad open to the Blueprint on the table. Let him reach for it.',
+    land: 'We built this as a practical first draft. You tell us what’s wrong.',
+    watch: 'If he’s rushed, skip the framing. Jump straight to the hero and adjust to his pace.'
+  },
+  {
+    moment: 'HERO',
+    title: 'First thing a customer sees',
+    section: 'Hero',
+    anchor: '#section-hero',
+    say: '“This is the first thing a customer sees. Your logo, your photo from a job, your phone number. One button to call you.”',
+    ask: '“Does that headline feel right? ‘One Call Solves It All’ — is that how you’d describe the business?”',
+    land: 'Pedro sees his own business. His logo, his photo, his number. He feels ownership before you say another word.',
+    watch: 'He may want to correct something immediately. Write it down. Don’t defend the page.'
+  },
+  {
+    moment: 'LANGUAGE TOGGLE',
+    title: 'Spanish in one tap',
+    section: 'Language Toggle',
+    anchor: '#section-hero',
+    say: '“Here’s the part I want to show you.”',
+    action: '— tap ES on the iPad — wait — don’t explain it yet —',
+    say2: '“Spanish-speaking customers see the whole site in Spanish. Same site. One tap.”',
+    bilingual: '“Un botón — todo en español.”',
+    ask: '“Any of the Spanish wording feel off to you?”',
+    land: 'This is the differentiator. Pedro serves Spanish-speaking customers. The site speaks their language without them asking.',
+    watch: 'This is usually the strongest moment in the meeting. Let him sit with it. Don’t fill the silence.'
+  },
+  {
+    moment: 'TRUST STRIP',
+    title: 'What the site says about you',
+    section: 'Trust Signals',
+    anchor: '#section-trust',
+    say: '“Right below the top — four things customers check before they call: Family-Run, Weekdays and Weekends, Free Estimates, Se Habla Español.”',
+    ask: '“Are all of these accurate? Anything you’d add or change?”',
+    land: 'These aren’t claims we invented. They’re things we expect are true — Pedro confirms, and they become facts on the page.',
+    watch: 'He may add something: “licensed,” “20 years,” “same-day.” Write exactly what he says. Those become the real trust signals.'
+  },
+  {
+    moment: 'PROJECT PHOTOS',
+    title: 'The most important section',
+    section: 'Recent Projects',
+    anchor: '#section-projects',
+    say: '“This is where your project photos go. The ones on here now are placeholders — not your real work. Customers look at these before they call.”',
+    ask: '“Do you have 2 or 3 photos from actual jobs? Phone photos are fine.”',
+    bilingual: '“¿Tiene fotos de sus trabajos?”',
+    land: 'Real photos are the biggest trust signal on this page. Without them it stays a template. This is the ask that matters most.',
+    watch: 'He may pull up photos on his phone right now. Take what he’ll share. Don’t leave without photos or a clear plan to get them.'
+  },
+  {
+    moment: 'SERVICES',
+    title: 'Three categories — does this match?',
+    section: 'Services',
+    anchor: '#section-services',
+    say: '“Three categories: landscaping, construction, remodeling. Four services under each. Inside and out — one crew.”',
+    ask: '“Does this match what you actually take on? Anything wrong, missing, or mislabeled?”',
+    land: 'Any correction he makes is buy-in. He’s not critiquing the site — he’s making it his.',
+    watch: 'He may list services you missed or want to rename a category. Write it verbatim — those become real page copy.'
+  },
+  {
+    moment: 'CONTACT',
+    title: 'Bottom of the page — one action',
+    section: 'Contact',
+    anchor: '#section-contact',
+    say: '“At the bottom — call or WhatsApp. No form to fill out. No waiting. That’s it.”',
+    ask: '“Right number? Anything else you’d want customers to be able to do here?”',
+    land: 'Simple. Low friction. Matches how his customers already reach him.',
+    watch: 'He may ask about a booking form or online quotes. Note it — don’t promise it. Say “that’s a next step.”'
+  },
+  {
+    moment: 'CLOSE',
+    title: 'The ask',
+    section: null,
+    anchor: null,
+    say: '“That’s the first draft. Photos plus your corrections — and we take this live.”',
+    ask: '“What do you think?” — then wait. Don’t fill the silence.',
+    land: 'He makes the decision. You’re not pushing — you’re making the next step obvious.',
+    yes: '“We’ll make the changes and be in touch.”',
+    unsure: '“No pressure. Take your time.”',
+    watch: 'Either way — ask for the photos one more time before you leave.'
+  }
+];
+
+// ── Render ──────────────────────────────────────────────────────────
+const wrap = document.getElementById('slides-wrap');
+const dotsEl = document.getElementById('dots');
+
+function renderSlide(d, i) {
+  const el = document.createElement('div');
+  el.className = 'slide';
+  el.id = 'slide-' + i;
+  el.setAttribute('tabindex', '-1');
+  el.setAttribute('role', 'tabpanel');
+  el.setAttribute('aria-label', 'Slide ' + (i + 1) + ': ' + d.title);
+
+  let h = '<div class="slide-moment">' + d.moment + '</div>'
+    + '<div class="slide-title">' + d.title + '</div>';
+
+  if (d.say) {
+    h += '<div class="block">'
+      + '<div class="block-label">Say this</div>'
+      + '<div class="block-body"><span class="quote">' + d.say + '</span></div>'
+      + '</div>';
+  }
+
+  if (d.action) {
+    h += '<p class="action-note">' + d.action + '</p>';
+  }
+
+  if (d.say2) {
+    h += '<div class="block">'
+      + '<div class="block-body"><span class="quote">' + d.say2 + '</span></div>'
+      + '</div>';
+  }
+
+  if (d.bilingual) {
+    h += '<p class="bilingual">' + d.bilingual + '</p>';
+  }
+
+  if (d.ask) {
+    h += '<div class="block" style="margin-top:14px">'
+      + '<div class="block-label">Ask this</div>'
+      + '<div class="block-body">' + d.ask + '</div>'
+      + '</div>';
+  }
+
+  if (d.land) {
+    h += '<div class="block">'
+      + '<div class="block-label">Land this</div>'
+      + '<div class="block-body muted">' + d.land + '</div>'
+      + '</div>';
+  }
+
+  if (d.yes) {
+    h += '<div class="block" style="margin-top:14px">'
+      + '<div class="scenario-label">YES</div>'
+      + '<div class="block-body"><span class="quote">' + d.yes + '</span></div>'
+      + '</div>'
+      + '<div class="scenario-divider"></div>'
+      + '<div class="block">'
+      + '<div class="scenario-label">UNSURE</div>'
+      + '<div class="block-body"><span class="quote">' + d.unsure + '</span></div>'
+      + '</div>';
+  }
+
+  if (d.watch) {
+    h += '<div class="block">'
+      + '<div class="block-label">Watch for</div>'
+      + '<div class="block-body muted italic">' + d.watch + '</div>'
+      + '</div>';
+  }
+
+  h += '<div class="slide-pad"></div>';
+  el.innerHTML = h;
+  return el;
+}
+
+SLIDES.forEach(function(d, i) {
+  wrap.appendChild(renderSlide(d, i));
+
+  var dot = document.createElement('button');
+  dot.className = 'dot';
+  dot.setAttribute('role', 'tab');
+  dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+  dot.setAttribute('tabindex', '-1');
+  dot.addEventListener('click', function() { goTo(i); });
+  dotsEl.appendChild(dot);
+});
+
+// ── Navigation ──────────────────────────────────────────────────────
+var current = 0;
+var transitioning = false;
+
+function goTo(n, dir) {
+  if (n < 0 || n >= SLIDES.length || n === current || transitioning) return;
+  transitioning = true;
+
+  var fwd = (dir !== undefined) ? (dir > 0) : (n > current);
+  var fromEl = document.getElementById('slide-' + current);
+  var toEl = document.getElementById('slide-' + n);
+
+  // Position incoming slide off-screen
+  toEl.style.transform = fwd ? 'translateX(100%)' : 'translateX(-100%)';
+  toEl.style.opacity = '1';
+  toEl.style.pointerEvents = 'none';
+
+  // Force reflow
+  toEl.getBoundingClientRect();
+
+  // Set transitions
+  var t = 'transform 220ms ease, opacity 220ms ease';
+  fromEl.style.transition = t;
+  toEl.style.transition = t;
+
+  // Animate
+  fromEl.style.transform = fwd ? 'translateX(-28%)' : 'translateX(28%)';
+  fromEl.style.opacity = '0';
+  toEl.style.transform = 'translateX(0)';
+  toEl.scrollTop = 0;
+
+  setTimeout(function() {
+    // Clean up from slide
+    fromEl.style.transition = '';
+    fromEl.style.transform = '';
+    fromEl.style.opacity = '';
+    fromEl.style.pointerEvents = '';
+    fromEl.classList.remove('active');
+
+    // Activate to slide
+    toEl.style.transition = '';
+    toEl.style.transform = '';
+    toEl.style.opacity = '';
+    toEl.style.pointerEvents = '';
+    toEl.classList.add('active');
+
+    current = n;
+    transitioning = false;
+    updateUI();
+    toEl.focus({ preventScroll: true });
+  }, 225);
+}
+
+function updateUI() {
+  var d = SLIDES[current];
+  document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + SLIDES.length;
+
+  var link = document.getElementById('ipad-link');
+  if (d.anchor) {
+    link.href = BP + d.anchor;
+    link.textContent = 'iPad: ' + d.section + ' ↗';
+    link.classList.remove('hidden');
+  } else {
+    link.classList.add('hidden');
+  }
+
+  document.getElementById('prev-btn').disabled = (current === 0);
+  document.getElementById('next-btn').disabled = (current === SLIDES.length - 1);
+
+  var dots = dotsEl.querySelectorAll('.dot');
+  dots.forEach(function(dot, i) {
+    dot.classList.toggle('active', i === current);
+    dot.setAttribute('aria-selected', i === current ? 'true' : 'false');
+    dot.setAttribute('tabindex', i === current ? '0' : '-1');
+  });
+}
+
+// Init
+document.getElementById('slide-0').classList.add('active');
+updateUI();
+
+document.getElementById('prev-btn').addEventListener('click', function() { goTo(current - 1, -1); });
+document.getElementById('next-btn').addEventListener('click', function() { goTo(current + 1, 1); });
+
+// Keyboard nav
+document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goTo(current + 1, 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1, -1); }
+  else if (e.key === 'Escape') { closeContact(); }
+});
+
+// Swipe detection
+var tx0 = 0, ty0 = 0;
+wrap.addEventListener('touchstart', function(e) {
+  tx0 = e.changedTouches[0].clientX;
+  ty0 = e.changedTouches[0].clientY;
+}, { passive: true });
+wrap.addEventListener('touchend', function(e) {
+  var dx = e.changedTouches[0].clientX - tx0;
+  var dy = e.changedTouches[0].clientY - ty0;
+  if (Math.abs(dx) > Math.abs(dy) * 1.5 && Math.abs(dx) > 44) {
+    dx < 0 ? goTo(current + 1, 1) : goTo(current - 1, -1);
+  }
+}, { passive: true });
+
+// ── Contact panel ───────────────────────────────────────────────────
+var contactBtn = document.getElementById('contact-btn');
+var contactPanel = document.getElementById('contact-panel');
+var panelOpen = false;
+
+function closeContact() {
+  if (!panelOpen) return;
+  panelOpen = false;
+  contactPanel.classList.remove('open');
+  contactBtn.setAttribute('aria-expanded', 'false');
+}
+
+contactBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  panelOpen = !panelOpen;
+  contactPanel.classList.toggle('open', panelOpen);
+  contactBtn.setAttribute('aria-expanded', String(panelOpen));
+  if (panelOpen) {
+    setTimeout(function() {
+      var first = contactPanel.querySelector('.contact-action');
+      if (first) first.focus();
+    }, 50);
+  }
+});
+
+document.addEventListener('click', function(e) {
+  if (panelOpen && !contactPanel.contains(e.target) && e.target !== contactBtn) {
+    closeContact();
+  }
+});
+</script>
+</body>
+</html>
